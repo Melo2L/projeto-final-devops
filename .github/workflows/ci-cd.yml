@@ -8,9 +8,7 @@ on:
 
 jobs:
   build-test:
-    name: Build + Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout do codigo
         uses: actions/checkout@v4
@@ -24,11 +22,9 @@ jobs:
           docker compose run --rm gateway python -m pytest -q
 
   deploy-dev:
-    name: Deploy DEV
     runs-on: ubuntu-latest
     needs: build-test
     environment: DEV
-
     steps:
       - name: Checkout do codigo
         uses: actions/checkout@v4
@@ -42,20 +38,14 @@ jobs:
           curl -sSf http://localhost:5001/data
           curl -sSf http://localhost:5000/api
 
-      - name: Logs (se falhar)
-        if: failure()
-        run: docker compose logs --no-color
-
       - name: Limpeza DEV
         if: always()
         run: docker compose down -v
 
   deploy-stg:
-    name: Deploy STG
     runs-on: ubuntu-latest
     needs: deploy-dev
     environment: STG
-
     steps:
       - name: Checkout do codigo
         uses: actions/checkout@v4
@@ -63,5 +53,30 @@ jobs:
       - name: Subir stack (STG)
         run: docker compose up -d --build
 
-      - name: S
+      - name: Smoke test STG
+        run: |
+          sleep 25
+          curl -sSf http://localhost:5001/data
+          curl -sSf http://localhost:5000/api
+
+      - name: Limpeza STG
+        if: always()
+        run: docker compose down -v
+
+  deploy-prd:
+    runs-on: ubuntu-latest
+    needs: deploy-stg
+    environment: PRD
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Subir stack (PRD)
+        run: docker compose up -d --build
+
+      - name: Smoke test PRD
+        run: |
+          sleep 25
+          curl -sSf http://localhost:5001/data
+          curl -sSf http://localhost:500
 
