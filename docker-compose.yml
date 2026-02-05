@@ -1,0 +1,12 @@
+services:
+  data-service:
+    build: ./services/data-service
+    ports:
+      - "5001:5001"
+
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - data-service
