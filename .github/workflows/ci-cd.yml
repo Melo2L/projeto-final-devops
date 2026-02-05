@@ -1,0 +1,34 @@
+name: Projeto inicial DevOps final
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Build dos containers
+        run: docker compose build
+
+      - name: Subir containers
+        run: docker compose up -d
+
+      - name: Smoke test (curl)
+        run: |
+          sleep 20
+          curl -sSf http://localhost:5001/data
+          curl -sSf http://localhost:5000/api
+
+      - name: Logs (se falhar)
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Derrubar containers
+        if: always()
+        run: docker compose down -v
