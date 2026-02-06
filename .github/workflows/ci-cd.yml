@@ -1,8 +1,9 @@
-
 name: SurfPulse CI/CD (DEV -> STG -> PRD)
 
 on:
   push:
+    branches: ["main"]
+  pull_request:
     branches: ["main"]
   workflow_dispatch:
 
@@ -15,9 +16,18 @@ jobs:
       - name: Checkout do codigo
         uses: actions/checkout@v4
 
+      - name: Debug - list files
+        run: |
+          echo "PWD:"
+          pwd
+          echo "LS ROOT:"
+          ls -la
+          echo "FIND docker-compose*:"
+          find . -maxdepth 2 -type f -name "docker-compose*"
+
       - name: Build + Deploy (DEV)
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+          docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml up -d --build
 
       - name: Smoke Tests (DEV)
         run: |
@@ -45,13 +55,13 @@ jobs:
       - name: Logs (se falhar)
         if: failure()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml ps
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml logs --no-color --tail=200
+          docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml ps
+          docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml logs --no-color --tail=200
 
       - name: Cleanup (DEV)
         if: always()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+          docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml down -v
 
 
   deploy-stg:
@@ -63,9 +73,18 @@ jobs:
       - name: Checkout do codigo
         uses: actions/checkout@v4
 
+      - name: Debug - list files
+        run: |
+          echo "PWD:"
+          pwd
+          echo "LS ROOT:"
+          ls -la
+          echo "FIND docker-compose*:"
+          find . -maxdepth 2 -type f -name "docker-compose*"
+
       - name: Build + Deploy (STG)
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
+          docker compose -f ./docker-compose.yml -f ./docker-compose.stg.yml up -d --build
 
       - name: Smoke Tests (STG)
         run: |
@@ -93,13 +112,13 @@ jobs:
       - name: Logs (se falhar)
         if: failure()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml ps
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml logs --no-color --tail=200
+          docker compose -f ./docker-compose.yml -f ./docker-compose.stg.yml ps
+          docker compose -f ./docker-compose.yml -f ./docker-compose.stg.yml logs --no-color --tail=200
 
       - name: Cleanup (STG)
         if: always()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
+          docker compose -f ./docker-compose.yml -f ./docker-compose.stg.yml down -v
 
 
   deploy-prd:
@@ -111,9 +130,18 @@ jobs:
       - name: Checkout do codigo
         uses: actions/checkout@v4
 
+      - name: Debug - list files
+        run: |
+          echo "PWD:"
+          pwd
+          echo "LS ROOT:"
+          ls -la
+          echo "FIND docker-compose*:"
+          find . -maxdepth 2 -type f -name "docker-compose*"
+
       - name: Build + Deploy (PRD)
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
+          docker compose -f ./docker-compose.yml -f ./docker-compose.prd.yml up -d --build
 
       - name: Smoke Tests (PRD)
         run: |
@@ -141,10 +169,10 @@ jobs:
       - name: Logs (se falhar)
         if: failure()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml ps
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml logs --no-color --tail=200
+          docker compose -f ./docker-compose.yml -f ./docker-compose.prd.yml ps
+          docker compose -f ./docker-compose.yml -f ./docker-compose.prd.yml logs --no-color --tail=200
 
       - name: Cleanup (PRD)
         if: always()
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v
+          docker compose -f ./docker-compose.yml -f ./docker-compose.prd.yml down -v
