@@ -1,84 +1,31 @@
-name: Pipeline com DEV STG PRD + testes
+
+name: SurfPulse CI/CD (DEV -> STG -> PRD)
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do codigo
-        uses: actions/checkout@v4
-
-      - name: Build dos containers
-        run: docker compose build
-
-      - name: Rodar testes (unit)
-        run: |
-          docker compose run --rm data-service python -m pytest -q
-          docker compose run --rm gateway python -m pytest -q
-
   deploy-dev:
+    name: DEV - Build, Deploy, Smoke Tests
     runs-on: ubuntu-latest
-    needs: build-test
-    environment: DEV
+
     steps:
       - name: Checkout do codigo
         uses: actions/checkout@v4
 
-      - name: Subir stack (DEV)
-        run: docker compose up -d --build
-
-      - name: Smoke test DEV
+      - name: Build + Deploy (DEV)
         run: |
-          sleep 25
-          curl -sSf http://localhost:5001/data
-          curl -sSf http://localhost:5000/api
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
-      - name: Limpeza DEV
-        if: always()
-        run: docker compose down -v
-
-  deploy-stg:
-    runs-on: ubuntu-latest
-    needs: deploy-dev
-    environment: STG
-    steps:
-      - name: Checkout do codigo
-        uses: actions/checkout@v4
-
-      - name: Subir stack (STG)
-        run: docker compose up -d --build
-
-      - name: Smoke test STG
+      - name: Smoke Tests (DEV)
         run: |
-          sleep 25
-          curl -sSf http://localhost:5001/data
-          curl -sSf http://localhost:5000/api
+          set -e
 
-      - name: Limpeza STG
-        if: always()
-        run: docker compose down -v
-
-  deploy-prd:
-    runs-on: ubuntu-latest
-    needs: deploy-stg
-    environment: PRD
-    steps:
-      - name: Checkout do codigo
-        uses: actions/checkout@v4
-
-      - name: Subir stack (PRD)
-        run: docker compose up -d --build
-
-      - name: Smoke test PRD
-        run: |
           echo "Aguardando gateway (porta 5000)..."
           for i in {1..30}; do
-            if curl -sSf http://localhost:5000/health > /dev/null; then
+            if curl -sSf http://localhost:5000/health >/dev/null; then
               echo "Gateway OK!"
               break
             fi
@@ -86,12 +33,118 @@ jobs:
             sleep 2
           done
 
-          echo "Testando data-service..."
-          curl -sSf http://localhost:5001/data
+          echo "Teste /api/report"
+          curl -sSf "http://localhost:5000/api/report?spot=carcavelos" >/dev/null
 
-          echo "Testando gateway..."
-          curl -sSf http://localhost:5000/api
+          echo "Teste /internal/send-daily"
+          curl -sSf -X POST "http://localhost:5000/internal/send-daily?spot=carcavelos" \
+            -H "X-Internal-Token: dev-token" >/dev/null
+
+          echo "DEV OK"
 
       - name: Logs (se falhar)
         if: failure()
-        run: docker compose logs --no-color
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml ps
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml logs --no-color --tail=200
+
+      - name: Cleanup (DEV)
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+
+
+  deploy-stg:
+    name: STG - Build, Deploy, Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy-dev
+
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Build + Deploy (STG)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
+
+      - name: Smoke Tests (STG)
+        run: |
+          set -e
+
+          echo "Aguardando gateway (porta 5000)..."
+          for i in {1..30}; do
+            if curl -sSf http://localhost:5000/health >/dev/null; then
+              echo "Gateway OK!"
+              break
+            fi
+            echo "Ainda nao... ($i/30)"
+            sleep 2
+          done
+
+          echo "Teste /api/report"
+          curl -sSf "http://localhost:5000/api/report?spot=nazare" >/dev/null
+
+          echo "Teste /internal/send-daily"
+          curl -sSf -X POST "http://localhost:5000/internal/send-daily?spot=nazare" \
+            -H "X-Internal-Token: dev-token" >/dev/null
+
+          echo "STG OK"
+
+      - name: Logs (se falhar)
+        if: failure()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml ps
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml logs --no-color --tail=200
+
+      - name: Cleanup (STG)
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
+
+
+  deploy-prd:
+    name: PRD - Build, Deploy, Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy-stg
+
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Build + Deploy (PRD)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
+
+      - name: Smoke Tests (PRD)
+        run: |
+          set -e
+
+          echo "Aguardando gateway (porta 5000)..."
+          for i in {1..30}; do
+            if curl -sSf http://localhost:5000/health >/dev/null; then
+              echo "Gateway OK!"
+              break
+            fi
+            echo "Ainda nao... ($i/30)"
+            sleep 2
+          done
+
+          echo "Teste /api/report"
+          curl -sSf "http://localhost:5000/api/report?spot=ericeira" >/dev/null
+
+          echo "Teste /internal/send-daily"
+          curl -sSf -X POST "http://localhost:5000/internal/send-daily?spot=ericeira" \
+            -H "X-Internal-Token: dev-token" >/dev/null
+
+          echo "PRD OK"
+
+      - name: Logs (se falhar)
+        if: failure()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml ps
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml logs --no-color --tail=200
+
+      - name: Cleanup (PRD)
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v

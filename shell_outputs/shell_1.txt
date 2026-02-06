@@ -1,0 +1,358 @@
+ubuntu@ubuntu-2204:~$ mkdir projeto-final-devops
+mkdir: cannot create directory ‘projeto-final-devops’: File exists
+ubuntu@ubuntu-2204:~$ git init
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/ubuntu/.git/
+ubuntu@ubuntu-2204:~$ cd projeto-final-devops
+ubuntu@ubuntu-2204:~/projeto-final-devops$ git init
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /home/ubuntu/projeto-final-devops/.git/
+ubuntu@ubuntu-2204:~/projeto-final-devops$ git remote add origin https://github.com/Melo2L/projeto-final-devops.git
+ubuntu@ubuntu-2204:~/projeto-final-devops$ mkdir -p projeto-final-devops/services/gateway/app
+mkdir -p projeto-final-devops/services/gateway/tests
+mkdir -p projeto-final-devops/services/data-service/app
+mkdir -p projeto-final-devops/services/data-service/tests
+mkdir -p projeto-final-devops/.github/workflows
+
+touch projeto-final-devops/services/gateway/app/main.py
+touch projeto-final-devops/services/gateway/tests/test_gateway.py
+touch projeto-final-devops/services/gateway/requirements.txt
+touch projeto-final-devops/services/gateway/Dockerfile
+
+touch projeto-final-devops/services/data-service/app/main.py
+touch projeto-final-devops/services/data-service/tests/test_data.py
+touch projeto-final-devops/services/data-service/requirements.txt
+touch projeto-final-devops/services/data-service/Dockerfile
+
+touch projeto-final-devops/docker-compose.yml
+touch projeto-final-devops/.github/workflows/ci-cd.yml
+touch projeto-final-devops/README.md
+ubuntu@ubuntu-2204:~/projeto-final-devops$ code .
+ubuntu@ubuntu-2204:~/projeto-final-devops$ docker compose up --build
+no configuration file provided: not found
+ubuntu@ubuntu-2204:~/projeto-final-devops$ cd ~/projeto-final-devops/projeto-final-devops
+ls
+docker-compose.yml  README.md  services
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose up --build
+empty compose file
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ ls -l docker-compose.yml
+-rw-rw-r-- 1 ubuntu ubuntu 0 fev  5 00:06 docker-compose.yml
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > docker-compose.yml <<'YAML'
+services:
+  data-service:
+    build: ./services/data-service
+    ports:
+      - "5001:5001"
+
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - data-service
+YAML
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ ls -l docker-compose.yml
+cat docker-compose.yml
+-rw-rw-r-- 1 ubuntu ubuntu 202 fev  5 00:14 docker-compose.yml
+services:
+  data-service:
+    build: ./services/data-service
+    ports:
+      - "5001:5001"
+
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - data-service
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose up --build
+[+] Building 0.6s (3/3) FINISHED                                                
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 31B                                        0.0s
+ => [data-service internal] load build definition from Dockerfile          0.1s
+ => => transferring dockerfile: 31B                                        0.0s
+[+] up 0/2
+ ⠙ Image projeto-final-devops-gateway      Building                         0.7s
+ ⠙ Image projeto-final-devops-data-service Building                         0.7s
+target gateway: failed to solve: the Dockerfile cannot be empty
+
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose up --build
+[+] Building 0.3s (3/3) FINISHED                                                
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 31B                                        0.0s
+ => [data-service internal] load build definition from Dockerfile          0.0s
+ => => transferring dockerfile: 31B                                        0.0s
+[+] up 0/2
+ ⠙ Image projeto-final-devops-gateway      Building                         0.5s
+ ⠙ Image projeto-final-devops-data-service Building                         0.5s
+target gateway: failed to solve: the Dockerfile cannot be empty
+
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/gateway/Dockerfile <<'DOCKER'
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app ./app
+CMD ["python", "app/main.py"]
+DOCKER
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/data-service/Dockerfile <<'DOCKER'
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app ./app
+CMD ["python", "app/main.py"]
+DOCKER
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose down
+docker compose up --build
+[+] Building 16.6s (17/20)                                                      
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [data-service internal] load build definition from Dockerfile          0.0s
+ => => transferring dockerfile: 194B                                       0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 194B                                       0.0s
+ => [gateway internal] load metadata for docker.io/library/python:3.11-sl  1.8s
+ => [data-service internal] load .dockerignore                             0.1s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.1s
+ => => transferring context: 2B                                            0.0s
+ => [data-service internal] load build context                             0.1s
+ => => transferring context: 94B                                           0.0s
+ => [data-service 1/5] FROM docker.io/library/python:3.11-slim@sha256:52  10.7s
+ => => resolve docker.io/library/python:3.11-slim@sha256:524557f6bd69c2bf  0.1s
+ => => sha256:543d6cace00ffc96bc95d332493bb28a4332c6dd614 1.75kB / 1.75kB  0.0s
+ => => sha256:466c0182639be3c46be2bd95edae0a22e92ff39913a 5.47kB / 5.47kB  0.0s
+ => => sha256:0c8d55a45c0dc58de60579b9cc5b708de9e7957f4 29.78MB / 29.78MB  4.4s
+ => => sha256:64faa99400e1388ed9f202917ada9fac34fd46c950d 1.29MB / 1.29MB  0.9s
+ => => sha256:8cbc47ff628d718fb76f7fca9897e4e8b607a4f54 14.36MB / 14.36MB  2.4s
+ => => sha256:524557f6bd69c2bffe4a4c812be528141b2bf42bf 10.37kB / 10.37kB  0.0s
+ => => sha256:d85099f0969e8b2306770a12dffcda300208cc3a18b876c 250B / 250B  1.3s
+ => => extracting sha256:0c8d55a45c0dc58de60579b9cc5b708de9e7957f4591fc7d  3.2s
+ => => extracting sha256:64faa99400e1388ed9f202917ada9fac34fd46c950d40cd4  0.3s
+ => => extracting sha256:8cbc47ff628d718fb76f7fca9897e4e8b607a4f543008cde  2.2s
+ => => extracting sha256:d85099f0969e8b2306770a12dffcda300208cc3a18b876c0  0.0s
+ => [gateway internal] load build context                                  0.1s
+ => => transferring context: 94B                                           0.0s
+ => [gateway 2/5] WORKDIR /app                                             0.4s
+ => [data-service 3/5] COPY requirements.txt .                             0.1s
+ => [data-service 4/5] RUN pip install --no-cache-dir -r requirements.txt  2.6s
+ => [gateway 5/5] COPY app ./app                                           0.1s
+ => [gateway] exporting to image                                           0.2s
+ => => exporting layers                                                    0.2s
+ => => writing image sha256:d8fec50aa75bf23589bae8d7130ae675466ceb5f7f5e6  0.0s
+ => => naming to docker.io/library/projeto-final-devops-gateway            0.0s
+ => [data-service] exporting to image                                      0.2s
+ => => exporting layers                                                    0.2s
+ => => writing image sha256:4d8bc9d4bab86f38fb2aca8fcf4dda76fb10c4662600c  0.0s
+ => => naming to docker.io/library/projeto-final-devops-data-service       0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [data-service] resolving provenance for metadata file                  0.0s
+[+] up 5/5
+ ✔ Image projeto-final-devops-gateway            Built                     16.7s
+ ✔ Image projeto-final-devops-data-service       Built                     16.7s
+ ✔ Network projeto-final-devops_default          Created                   0.1s
+ ✔ Container projeto-final-devops-data-service-1 Created                   0.1s
+ ✔ Container projeto-final-devops-gateway-1      Created                   0.1s
+Attaching to data-service-1, gateway-1
+data-service-1 exited with code 0
+gateway-1 exited with code 0
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ w
+ 00:16:30 up  1:20,  1 user,  load average: 0,86, 0,37, 0,31
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+ubuntu   :1       :1               23:01   ?xdm?   9:51   0.00s /usr/libexec/gd
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose logs --no-color --tail=200
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ sed -n '1,200p' services/data-service/app/main.py
+sed -n '1,200p' services/gateway/app/main.py
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ ls -l services/data-service/app/main.py services/gateway/app/main.py
+-rw-rw-r-- 1 ubuntu ubuntu 0 fev  5 00:06 services/data-service/app/main.py
+-rw-rw-r-- 1 ubuntu ubuntu 0 fev  5 00:06 services/gateway/app/main.py
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/data-service/app/main.py <<'PY'
+from flask import Flask, jsonify
+import datetime
+
+app = Flask(__name__)
+
+@app.get("/data")
+def data():
+    return jsonify({
+        "service": "data-service",
+        "message": "ola do microservico 2",
+        "utc": datetime.datetime.utcnow().isoformat()
+    })
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)
+PY
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/gateway/app/main.py <<'PY'
+from flask import Flask, jsonify
+import requests
+
+app = Flask(__name__)
+
+@app.get("/api")
+def api():
+    r = requests.get("http://data-service:5001/data", timeout=3)
+    return jsonify({
+        "service": "gateway",
+        "status": "ok",
+        "from_data_service": r.json()
+    })
+
+@app.get("/health")
+def health():
+    return jsonify({"status": "healthy"})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+PY
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/data-service/requirements.txt <<'REQ'
+flask==3.0.3
+pytest==8.3.2
+REQ
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ cat > services/gateway/requirements.txt <<'REQ'
+flask==3.0.3
+requests==2.32.3
+pytest==8.3.2
+REQ
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose down
+docker compose up --build
+[+] down 3/3
+ ✔ Container projeto-final-devops-gateway-1      Removed                    0.0s
+ ✔ Container projeto-final-devops-data-service-1 Removed                    0.0s
+ ✔ Network projeto-final-devops_default          Removed                    0.1s
+[+] Building 8.1s (20/20) FINISHED                                              
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [data-service internal] load build definition from Dockerfile          0.0s
+ => => transferring dockerfile: 194B                                       0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 194B                                       0.0s
+ => [gateway internal] load metadata for docker.io/library/python:3.11-sl  0.5s
+ => [data-service internal] load .dockerignore                             0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [data-service 1/5] FROM docker.io/library/python:3.11-slim@sha256:524  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 586B                                          0.0s
+ => [data-service internal] load build context                             0.0s
+ => => transferring context: 470B                                          0.0s
+ => CACHED [gateway 2/5] WORKDIR /app                                      0.0s
+ => [gateway 3/5] COPY requirements.txt .                                  0.1s
+ => [data-service 3/5] COPY requirements.txt .                             0.1s
+ => [gateway 4/5] RUN pip install --no-cache-dir -r requirements.txt       6.5s
+ => [data-service 4/5] RUN pip install --no-cache-dir -r requirements.txt  5.7s
+ => [data-service 5/5] COPY app ./app                                      0.1s
+ => [data-service] exporting to image                                      0.3s
+ => => exporting layers                                                    0.3s
+ => => writing image sha256:2eec59412ce5a52ed797b33e1d33db8659a07307d7290  0.0s
+ => => naming to docker.io/library/projeto-final-devops-data-service       0.0s
+ => [data-service] resolving provenance for metadata file                  0.0s
+ => [gateway 5/5] COPY app ./app                                           0.2s
+ => [gateway] exporting to image                                           0.3s
+ => => exporting layers                                                    0.3s
+ => => writing image sha256:9ed4ad216f383430eb7cecf7aabfc8311f87b1a8c95bc  0.0s
+ => => naming to docker.io/library/projeto-final-devops-gateway            0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+[+] up 5/5
+ ✔ Image projeto-final-devops-gateway            Built                      8.2s
+ ✔ Image projeto-final-devops-data-service       Built                      8.2s
+ ✔ Network projeto-final-devops_default          Created                    0.1s
+ ✔ Container projeto-final-devops-data-service-1 Created                    0.2s
+ ✔ Container projeto-final-devops-gateway-1      Created                    0.1s
+Attaching to data-service-1, gateway-1
+data-service-1  |  * Serving Flask app 'main'
+data-service-1  |  * Debug mode: off
+data-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+data-service-1  |  * Running on all addresses (0.0.0.0)
+data-service-1  |  * Running on http://127.0.0.1:5001
+data-service-1  |  * Running on http://172.18.0.2:5001
+data-service-1  | Press CTRL+C to quit
+gateway-1       |  * Serving Flask app 'main'
+gateway-1       |  * Debug mode: off
+gateway-1       | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+gateway-1       |  * Running on all addresses (0.0.0.0)
+gateway-1       |  * Running on http://127.0.0.1:5000
+gateway-1       |  * Running on http://172.18.0.3:5000
+gateway-1       | Press CTRL+C to quit
+
+
+
+data-service-1  | 172.18.0.1 - - [05/Feb/2026 00:20:02] "GET /data HTTP/1.1" 200 -
+data-service-1  | 172.18.0.3 - - [05/Feb/2026 00:20:02] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 00:20:02] "GET /api HTTP/1.1" 200 -
+data-service-1 has been recreated
+data-service-1 exited with code 137
+gateway-1 has been recreated
+gateway-1 exited with code 137
+data-service-1  |  * Serving Flask app 'main'
+data-service-1  |  * Debug mode: off
+data-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+data-service-1  |  * Running on all addresses (0.0.0.0)
+data-service-1  |  * Running on http://127.0.0.1:5001
+data-service-1  |  * Running on http://172.18.0.3:5001
+data-service-1  | Press CTRL+C to quit
+gateway-1       |  * Serving Flask app 'main'
+gateway-1       |  * Debug mode: off
+gateway-1       | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+gateway-1       |  * Running on all addresses (0.0.0.0)
+gateway-1       |  * Running on http://127.0.0.1:5000
+gateway-1       |  * Running on http://172.18.0.4:5000
+gateway-1       | Press CTRL+C to quit
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:06:25] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:06:25] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:06:25] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:06:25] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:06:25] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:06:25] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:36] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:36] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:36] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:36] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:36] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:36] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:41] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:41] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:41] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:41] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:41] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:41] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:42] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:42] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:42] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:42] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:08:42] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:08:42] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:09:39] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:09:39] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:09:39] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:09:39] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:09:39] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:09:39] "GET /api HTTP/1.1" 200 -
+gateway-1 exited with code 137
+data-service-1 exited with code 137
+
