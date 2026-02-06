@@ -1,20 +1,42 @@
 services:
-  data-service:
-    build: ./services/data-service
+  surf-data-service:
+    build: ./services/surf-data-service
     ports:
       - "5001:5001"
+
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "5002:5002"
+    environment:
+      - ENVIRONMENT=DEV
 
   gateway:
     build: ./services/gateway
     ports:
       - "5000:5000"
+    environment:
+      - ENVIRONMENT=DEV
+      - INTERNAL_TOKEN=dev-token
+      - SURF_DATA_URL=http://surf-data-service:5001
+      - NOTIFY_URL=http://notification-service:5002
     depends_on:
-      - data-service
-    
+      - surf-data-service
+      - notification-service
+      - jaeger
+
+  scheduler-service:
+    build: ./services/scheduler-service
+    environment:
+      - ENVIRONMENT=DEV
+      - INTERNAL_TOKEN=dev-token
+      - GATEWAY_URL=http://gateway:5000
+      - SCHEDULE_SECONDS=60
+    depends_on:
+      - gateway
+
   jaeger:
     image: jaegertracing/all-in-one:1.57
     ports:
-        #UI do Jaeger
-      - "16686:16686"
-      #OTLP HTTP (recebe traces)
-      - "4318:4318"
+      - "16686:16686"   # Jaeger UI
+      - "4318:4318"     # OTLP HTTP (recebe traces)

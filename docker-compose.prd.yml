@@ -1,0 +1,14 @@
+services:
+  gateway:
+    environment:
+      - ENVIRONMENT=PRD
+  surf-data-service:
+    environment:
+      - ENVIRONMENT=PRD
+  notification-service:
+    environment:
+      - ENVIRONMENT=PRD
+  scheduler-service:
+    environment:
+      - ENVIRONMENT=PRD
+      - SCHEDULE_SECONDS=86400
