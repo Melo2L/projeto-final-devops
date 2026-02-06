@@ -27,6 +27,7 @@ jobs:
 
       - name: Build + Deploy (DEV)
         run: |
+          ls -la
           docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml up -d --build
 
       - name: Smoke Tests (DEV)
