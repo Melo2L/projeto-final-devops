@@ -1,0 +1,311 @@
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ curl http://localhost:5000/api
+curl http://localhost:5000/api
+curl http://localhost:5000/api
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:06:25.035748"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:06:25.059607"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:06:25.080886"},"service":"gateway","status":"ok"}
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ curl http://localhost:5000/api
+curl http://localhost:5000/api
+curl http://localhost:5000/api
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:36.589985"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:36.613463"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:36.634597"},"service":"gateway","status":"ok"}
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ curl http://localhost:5000/api
+curl http://localhost:5000/api
+curl http://localhost:5000/api
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:41.760511"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:41.779878"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:41.806384"},"service":"gateway","status":"ok"}
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ curl http://localhost:5000/api
+curl http://localhost:5000/api
+curl http://localhost:5000/api
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:42.688776"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:42.709085"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:08:42.732048"},"service":"gateway","status":"ok"}
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ curl http://localhost:5000/api
+curl http://localhost:5000/api
+curl http://localhost:5000/api
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:09:39.212123"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:09:39.231507"},"service":"gateway","status":"ok"}
+{"from_data_service":{"message":"ola do microservico 2","service":"data-service","utc":"2026-02-05T01:09:39.256120"},"service":"gateway","status":"ok"}
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose down
+docker compose up --build
+[+] down 4/4
+ ✔ Container projeto-final-devops-gateway-1      Removed                   10.4s
+ ✔ Container projeto-final-devops-jaeger-1       Removed                   0.4ss
+ ✔ Container projeto-final-devops-data-service-1 Removed                   10.4s
+ ✔ Network projeto-final-devops_default          Removed                   0.1s
+[+] Building 13.4s (22/22) FINISHED                                             
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [data-service internal] load build definition from Dockerfile          0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [data-service internal] load metadata for docker.io/library/python:3.  1.1s
+ => [data-service internal] load .dockerignore                             0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce77  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 401B                                          0.0s
+ => [data-service internal] load build context                             0.0s
+ => => transferring context: 189B                                          0.0s
+ => CACHED [data-service 2/6] WORKDIR /app                                 0.0s
+ => [gateway 3/6] COPY requirements.txt .                                  0.1s
+ => CACHED [data-service 3/6] COPY requirements.txt .                      0.0s
+ => CACHED [data-service 4/6] RUN pip install --no-cache-dir -r requireme  0.0s
+ => CACHED [data-service 5/6] COPY app ./app                               0.0s
+ => CACHED [data-service 6/6] COPY tests ./tests                           0.0s
+ => [data-service] exporting to image                                      0.0s
+ => => exporting layers                                                    0.0s
+ => => writing image sha256:cfb9d8eb81962437e1a5ba6ec0b0872467ae4a577962b  0.0s
+ => => naming to docker.io/library/projeto-final-devops-data-service       0.0s
+ => [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt      10.7s
+ => [data-service] resolving provenance for metadata file                  0.0s
+ => [gateway 5/6] COPY app ./app                                           0.1s
+ => [gateway 6/6] COPY tests ./tests                                       0.1s
+ => [gateway] exporting to image                                           0.6s
+ => => exporting layers                                                    0.6s
+ => => writing image sha256:e9db26f6b9157a8556ebb312bd2750173812240651afe  0.0s
+ => => naming to docker.io/library/projeto-final-devops-gateway            0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+[+] up 6/6
+ ✔ Image projeto-final-devops-gateway            Built                     13.6s
+ ✔ Image projeto-final-devops-data-service       Built                     13.6s
+ ✔ Network projeto-final-devops_default          Created                   0.1s
+ ✔ Container projeto-final-devops-jaeger-1       Created                   0.2s
+ ✔ Container projeto-final-devops-data-service-1 Created                   0.2s
+ ✔ Container projeto-final-devops-gateway-1      Created                   0.1s
+Attaching to data-service-1, gateway-1, jaeger-1
+jaeger-1  | 2026/02/05 01:11:19 maxprocs: Leaving GOMAXPROCS=3: CPU quota undefined
+jaeger-1  | 2026/02/05 01:11:19 application version: git-commit=55e991a29725468164b11be5fc4e260dc09598d6, git-version=v1.57.0, build-date=2024-05-01T23:19:12Z
+jaeger-1  | {"level":"info","ts":1770253879.6160734,"caller":"flags/service.go:110","msg":"Mounting metrics handler on admin server","route":"/metrics"}
+jaeger-1  | {"level":"info","ts":1770253879.6217206,"caller":"flags/service.go:116","msg":"Mounting expvar handler on admin server","route":"/debug/vars"}
+jaeger-1  | {"level":"info","ts":1770253879.6303637,"caller":"flags/admin.go:130","msg":"Mounting health check on admin server","route":"/"}
+jaeger-1  | {"level":"info","ts":1770253879.630872,"caller":"flags/admin.go:144","msg":"Starting admin HTTP server","http-addr":":14269"}
+jaeger-1  | {"level":"info","ts":1770253879.6309595,"caller":"flags/admin.go:122","msg":"Admin server started","http.host-port":"0.0.0.0:14269","health-status":"unavailable"}
+jaeger-1  | {"level":"info","ts":1770253879.6316833,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #1]Channel created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6321244,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #1]original dial target is: \"localhost:4317\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6324852,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #1]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"4317\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6325,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #1]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6325095,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #1]parsed dial target is: dns:///localhost:4317","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6325173,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #1]Channel authority set to \"localhost:4317\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.632973,"caller":"memory/factory.go:85","msg":"Memory storage initialized","configuration":{"MaxTraces":0}}
+jaeger-1  | {"level":"info","ts":1770253879.639512,"caller":"static/strategy_store.go:160","msg":"Loading sampling strategies","filename":"/etc/jaeger/sampling_strategies.json"}
+jaeger-1  | {"level":"warn","ts":1770253879.6416478,"caller":"static/strategy_store.go:82","msg":"Default operations level strategies will not be included for Ratelimiting service strategies.This behavior will be changed in future releases. Cf. https://github.com/jaegertracing/jaeger/issues/5270"}
+jaeger-1  | {"level":"info","ts":1770253879.6530828,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #2]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6539528,"caller":"server/grpc.go:104","msg":"Starting jaeger-collector gRPC server","grpc.host-port":"0.0.0.0:14250"}
+jaeger-1  | {"level":"info","ts":1770253879.6543694,"caller":"server/http.go:56","msg":"Starting jaeger-collector HTTP server","http host-port":":14268"}
+jaeger-1  | {"level":"info","ts":1770253879.6547604,"caller":"app/collector.go:146","msg":"Not listening for Zipkin HTTP traffic, port not configured"}
+jaeger-1  | {"level":"info","ts":1770253879.6602142,"caller":"handler/otlp_receiver.go:77","msg":"OTLP receiver status change","status":"StatusStarting"}
+jaeger-1  | {"level":"info","ts":1770253879.6571198,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #2 ListenSocket #3]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"warn","ts":1770253879.6623797,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+jaeger-1  | {"level":"info","ts":1770253879.6632154,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #4]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6658099,"caller":"otlpreceiver@v0.98.0/otlp.go:102","msg":"Starting GRPC server","endpoint":"0.0.0.0:4317"}
+jaeger-1  | {"level":"warn","ts":1770253879.66707,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+jaeger-1  | {"level":"info","ts":1770253879.6675093,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #4 ListenSocket #5]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6677094,"caller":"otlpreceiver@v0.98.0/otlp.go:152","msg":"Starting HTTP server","endpoint":"0.0.0.0:4318"}
+jaeger-1  | {"level":"info","ts":1770253879.668803,"caller":"grpc/builder.go:74","msg":"Agent requested insecure grpc connection to collector(s)"}
+jaeger-1  | {"level":"info","ts":1770253879.6688693,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #6]Channel created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6688807,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #6]original dial target is: \"localhost:14250\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6688995,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #6]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"14250\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.668905,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #6]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6689117,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #6]parsed dial target is: dns:///localhost:14250","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6689172,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #6]Channel authority set to \"localhost:14250\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.670248,"caller":"all-in-one/main.go:265","msg":"Starting agent"}
+jaeger-1  | {"level":"info","ts":1770253879.6717846,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #7]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6722121,"caller":"app/static_handler.go:109","msg":"Using UI configuration","path":""}
+jaeger-1  | {"level":"info","ts":1770253879.6722865,"caller":"app/server.go:236","msg":"Query server started","http_addr":"0.0.0.0:16686","grpc_addr":"0.0.0.0:16685"}
+jaeger-1  | {"level":"info","ts":1770253879.6722975,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"ready"}
+jaeger-1  | {"level":"info","ts":1770253879.6723144,"caller":"app/server.go:319","msg":"Starting GRPC server","port":16685,"addr":":16685"}
+jaeger-1  | {"level":"info","ts":1770253879.6723506,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #7 ListenSocket #8]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253879.6723752,"caller":"grpc/builder.go:115","msg":"Checking connection to collector"}
+jaeger-1  | {"level":"info","ts":1770253879.6723807,"caller":"grpc/builder.go:131","msg":"Agent collector connection state change","dialTarget":"localhost:14250","status":"IDLE"}
+jaeger-1  | {"level":"info","ts":1770253879.672405,"caller":"app/agent.go:69","msg":"Starting jaeger-agent HTTP server","http-port":5778}
+jaeger-1  | {"level":"info","ts":1770253879.6725004,"caller":"app/server.go:301","msg":"Starting HTTP server","port":16686,"addr":":16686"}
+data-service-1  |  * Serving Flask app 'main'
+data-service-1  |  * Debug mode: off
+data-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+data-service-1  |  * Running on all addresses (0.0.0.0)
+data-service-1  |  * Running on http://127.0.0.1:5001
+data-service-1  |  * Running on http://172.18.0.2:5001
+data-service-1  | Press CTRL+C to quit
+gateway-1       |  * Serving Flask app 'main'
+gateway-1       |  * Debug mode: off
+gateway-1       | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+gateway-1       |  * Running on all addresses (0.0.0.0)
+gateway-1       |  * Running on http://127.0.0.1:5000
+gateway-1       |  * Running on http://172.18.0.4:5000
+gateway-1       | Press CTRL+C to quit
+Gracefully Stopping... press Ctrl+C again to force
+Container projeto-final-devops-jaeger-1 Stopping 
+Container projeto-final-devops-gateway-1 Stopping 
+jaeger-1        | {"level":"info","ts":1770253884.6530578,"caller":"flags/service.go:139","msg":"Shutting down"}
+jaeger-1        | {"level":"info","ts":1770253884.6532524,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"unavailable"}
+jaeger-1        | {"level":"info","ts":1770253884.6532812,"caller":"app/agent.go:89","msg":"shutting down agent's HTTP server","addr":"0.0.0.0:5778"}
+jaeger-1        | {"level":"info","ts":1770253884.6534076,"caller":"app/agent.go:73","msg":"agent's http server exiting"}
+jaeger-1        | {"level":"info","ts":1770253884.6537032,"caller":"grpc@v1.63.2/clientconn.go:531","msg":"[core][Channel #6]Channel Connectivity change to SHUTDOWN","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6537335,"caller":"grpc@v1.63.2/resolver_wrapper.go:100","msg":"[core][Channel #6]Closing the name resolver","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6537538,"caller":"grpc@v1.63.2/balancer_wrapper.go:135","msg":"[core][Channel #6]ccBalancerWrapper: closing","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.653912,"caller":"grpc/builder.go:131","msg":"Agent collector connection state change","dialTarget":"localhost:14250","status":"SHUTDOWN"}
+jaeger-1        | {"level":"info","ts":1770253884.6539304,"caller":"grpc@v1.63.2/clientconn.go:1145","msg":"[core][Channel #6]Channel deleted","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.653988,"caller":"grpc@v1.63.2/server.go:807","msg":"[core][Server #2 ListenSocket #3]ListenSocket deleted","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6572838,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"unavailable"}
+jaeger-1        | {"level":"info","ts":1770253884.6574152,"caller":"handler/otlp_receiver.go:77","msg":"OTLP receiver status change","status":"StatusStopping"}
+jaeger-1        | {"level":"info","ts":1770253884.6575727,"caller":"grpc@v1.63.2/server.go:807","msg":"[core][Server #4 ListenSocket #5]ListenSocket deleted","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6576498,"caller":"handler/otlp_receiver.go:77","msg":"OTLP receiver status change","status":"StatusStopped"}
+jaeger-1        | {"level":"info","ts":1770253884.6577961,"caller":"grpc@v1.63.2/server.go:807","msg":"[core][Server #7 ListenSocket #8]ListenSocket deleted","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6578877,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"unavailable"}
+jaeger-1        | {"level":"info","ts":1770253884.657941,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"unavailable"}
+jaeger-1        | {"level":"info","ts":1770253884.6580846,"caller":"grpc@v1.63.2/clientconn.go:531","msg":"[core][Channel #1]Channel Connectivity change to SHUTDOWN","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6581893,"caller":"grpc@v1.63.2/resolver_wrapper.go:100","msg":"[core][Channel #1]Closing the name resolver","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6582162,"caller":"grpc@v1.63.2/balancer_wrapper.go:135","msg":"[core][Channel #1]ccBalancerWrapper: closing","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6582367,"caller":"grpc@v1.63.2/clientconn.go:1145","msg":"[core][Channel #1]Channel deleted","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253884.6582904,"caller":"flags/service.go:147","msg":"Shutdown complete"}
+Container projeto-final-devops-jaeger-1 Stopped 
+jaeger-1 exited with code 0
+^C^CContainer projeto-final-devops-gateway-1 Stopped 
+Container projeto-final-devops-data-service-1 Stopping 
+^C^CContainer projeto-final-devops-data-service-1 Stopped 
+
+ubuntu@ubuntu-2204:~/projeto-final-devops/projeto-final-devops$ docker compose down
+docker compose up --build
+[+] down 4/4
+ ✔ Container projeto-final-devops-jaeger-1       Removed                    0.0s
+ ✔ Container projeto-final-devops-gateway-1      Removed                    0.0s
+ ✔ Container projeto-final-devops-data-service-1 Removed                    0.0s
+ ✔ Network projeto-final-devops_default          Removed                    0.1s
+[+] Building 13.3s (22/22) FINISHED                                             
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.19kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [data-service internal] load build definition from Dockerfile          0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [gateway internal] load metadata for docker.io/library/python:3.11-sl  0.5s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [data-service internal] load .dockerignore                             0.0s
+ => => transferring context: 2B                                            0.0s
+ => [data-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db2  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 1.61kB                                        0.0s
+ => [data-service internal] load build context                             0.0s
+ => => transferring context: 381B                                          0.0s
+ => CACHED [data-service 2/6] WORKDIR /app                                 0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => [gateway 5/6] COPY app ./app                                           0.1s
+ => [data-service 3/6] COPY requirements.txt .                             0.1s
+ => [gateway 6/6] COPY tests ./tests                                       0.1s
+ => [data-service 4/6] RUN pip install --no-cache-dir -r requirements.tx  11.5s
+ => [gateway] exporting to image                                           0.1s
+ => => exporting layers                                                    0.1s
+ => => writing image sha256:c41e36618ebf0be5804428cb5d6f9d215a3de7050afd2  0.0s
+ => => naming to docker.io/library/projeto-final-devops-gateway            0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [data-service 5/6] COPY app ./app                                      0.1s
+ => [data-service 6/6] COPY tests ./tests                                  0.1s
+ => [data-service] exporting to image                                      0.5s
+ => => exporting layers                                                    0.4s
+ => => writing image sha256:d49fe5969f15d779a2bb3cf4e9f8b6464c389efebc1e7  0.0s
+ => => naming to docker.io/library/projeto-final-devops-data-service       0.0s
+ => [data-service] resolving provenance for metadata file                  0.0s
+[+] up 6/6
+ ✔ Image projeto-final-devops-gateway            Built                     13.4s
+ ✔ Image projeto-final-devops-data-service       Built                     13.4s
+ ✔ Network projeto-final-devops_default          Created                   0.1s
+ ✔ Container projeto-final-devops-jaeger-1       Created                   0.2s
+ ✔ Container projeto-final-devops-data-service-1 Created                   0.2s
+ ✔ Container projeto-final-devops-gateway-1      Created                   0.1s
+Attaching to data-service-1, gateway-1, jaeger-1
+jaeger-1  | 2026/02/05 01:12:05 maxprocs: Leaving GOMAXPROCS=3: CPU quota undefined
+jaeger-1  | 2026/02/05 01:12:05 application version: git-commit=55e991a29725468164b11be5fc4e260dc09598d6, git-version=v1.57.0, build-date=2024-05-01T23:19:12Z
+jaeger-1  | {"level":"info","ts":1770253925.5281696,"caller":"flags/service.go:110","msg":"Mounting metrics handler on admin server","route":"/metrics"}
+jaeger-1  | {"level":"info","ts":1770253925.5282433,"caller":"flags/service.go:116","msg":"Mounting expvar handler on admin server","route":"/debug/vars"}
+jaeger-1  | {"level":"info","ts":1770253925.5458746,"caller":"flags/admin.go:130","msg":"Mounting health check on admin server","route":"/"}
+jaeger-1  | {"level":"info","ts":1770253925.5463088,"caller":"flags/admin.go:144","msg":"Starting admin HTTP server","http-addr":":14269"}
+jaeger-1  | {"level":"info","ts":1770253925.54715,"caller":"flags/admin.go:122","msg":"Admin server started","http.host-port":"0.0.0.0:14269","health-status":"unavailable"}
+jaeger-1  | {"level":"info","ts":1770253925.5474079,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #1]Channel created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5474734,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #1]original dial target is: \"localhost:4317\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5475194,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #1]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"4317\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5475302,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #1]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5475445,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #1]parsed dial target is: dns:///localhost:4317","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5475557,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #1]Channel authority set to \"localhost:4317\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5478287,"caller":"memory/factory.go:85","msg":"Memory storage initialized","configuration":{"MaxTraces":0}}
+jaeger-1  | {"level":"info","ts":1770253925.548187,"caller":"static/strategy_store.go:160","msg":"Loading sampling strategies","filename":"/etc/jaeger/sampling_strategies.json"}
+jaeger-1  | {"level":"warn","ts":1770253925.54852,"caller":"static/strategy_store.go:82","msg":"Default operations level strategies will not be included for Ratelimiting service strategies.This behavior will be changed in future releases. Cf. https://github.com/jaegertracing/jaeger/issues/5270"}
+jaeger-1  | {"level":"info","ts":1770253925.5995586,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #2]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.5999234,"caller":"server/grpc.go:104","msg":"Starting jaeger-collector gRPC server","grpc.host-port":"0.0.0.0:14250"}
+jaeger-1  | {"level":"info","ts":1770253925.5999694,"caller":"server/http.go:56","msg":"Starting jaeger-collector HTTP server","http host-port":":14268"}
+jaeger-1  | {"level":"info","ts":1770253925.6009958,"caller":"app/collector.go:146","msg":"Not listening for Zipkin HTTP traffic, port not configured"}
+jaeger-1  | {"level":"info","ts":1770253925.6015458,"caller":"handler/otlp_receiver.go:77","msg":"OTLP receiver status change","status":"StatusStarting"}
+jaeger-1  | {"level":"warn","ts":1770253925.6016665,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+jaeger-1  | {"level":"info","ts":1770253925.6018183,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #3]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6019068,"caller":"otlpreceiver@v0.98.0/otlp.go:102","msg":"Starting GRPC server","endpoint":"0.0.0.0:4317"}
+jaeger-1  | {"level":"warn","ts":1770253925.6020257,"caller":"internal@v0.98.0/warning.go:42","msg":"Using the 0.0.0.0 address exposes this server to every network interface, which may facilitate Denial of Service attacks. Enable the feature gate to change the default and remove this warning.","documentation":"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks","feature gate ID":"component.UseLocalHostAsDefaultHost"}
+jaeger-1  | {"level":"info","ts":1770253925.6021402,"caller":"otlpreceiver@v0.98.0/otlp.go:152","msg":"Starting HTTP server","endpoint":"0.0.0.0:4318"}
+jaeger-1  | {"level":"info","ts":1770253925.6022801,"caller":"grpc/builder.go:74","msg":"Agent requested insecure grpc connection to collector(s)"}
+jaeger-1  | {"level":"info","ts":1770253925.6024199,"caller":"grpc@v1.63.2/clientconn.go:427","msg":"[core][Channel #4]Channel created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.602509,"caller":"grpc@v1.63.2/clientconn.go:1668","msg":"[core][Channel #4]original dial target is: \"localhost:14250\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6025524,"caller":"grpc@v1.63.2/clientconn.go:1675","msg":"[core][Channel #4]parsed dial target is: resolver.Target{URL:url.URL{Scheme:\"localhost\", Opaque:\"14250\", User:(*url.Userinfo)(nil), Host:\"\", Path:\"\", RawPath:\"\", OmitHost:false, ForceQuery:false, RawQuery:\"\", Fragment:\"\", RawFragment:\"\"}}","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6025681,"caller":"grpc@v1.63.2/clientconn.go:1694","msg":"[core][Channel #4]fallback to scheme \"dns\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.602588,"caller":"grpc@v1.63.2/clientconn.go:1702","msg":"[core][Channel #4]parsed dial target is: dns:///localhost:14250","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6026027,"caller":"grpc@v1.63.2/clientconn.go:1825","msg":"[core][Channel #4]Channel authority set to \"localhost:14250\"","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.603366,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #2 ListenSocket #5]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6049495,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #3 ListenSocket #6]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6049886,"caller":"grpc/builder.go:115","msg":"Checking connection to collector"}
+jaeger-1  | {"level":"info","ts":1770253925.6049957,"caller":"grpc/builder.go:131","msg":"Agent collector connection state change","dialTarget":"localhost:14250","status":"IDLE"}
+jaeger-1  | {"level":"info","ts":1770253925.6054168,"caller":"all-in-one/main.go:265","msg":"Starting agent"}
+jaeger-1  | {"level":"info","ts":1770253925.6065853,"caller":"app/agent.go:69","msg":"Starting jaeger-agent HTTP server","http-port":5778}
+jaeger-1  | {"level":"info","ts":1770253925.60677,"caller":"grpc@v1.63.2/server.go:675","msg":"[core][Server #7]Server created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.6078346,"caller":"app/static_handler.go:109","msg":"Using UI configuration","path":""}
+jaeger-1  | {"level":"info","ts":1770253925.6084564,"caller":"app/server.go:236","msg":"Query server started","http_addr":"0.0.0.0:16686","grpc_addr":"0.0.0.0:16685"}
+jaeger-1  | {"level":"info","ts":1770253925.6085484,"caller":"healthcheck/handler.go:129","msg":"Health Check state change","status":"ready"}
+jaeger-1  | {"level":"info","ts":1770253925.6085997,"caller":"app/server.go:319","msg":"Starting GRPC server","port":16685,"addr":":16685"}
+jaeger-1  | {"level":"info","ts":1770253925.608664,"caller":"grpc@v1.63.2/server.go:871","msg":"[core][Server #7 ListenSocket #8]ListenSocket created","system":"grpc","grpc_log":true}
+jaeger-1  | {"level":"info","ts":1770253925.610038,"caller":"app/server.go:301","msg":"Starting HTTP server","port":16686,"addr":":16686"}
+data-service-1  |  * Serving Flask app 'main'
+data-service-1  |  * Debug mode: off
+data-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+data-service-1  |  * Running on all addresses (0.0.0.0)
+data-service-1  |  * Running on http://127.0.0.1:5001
+data-service-1  |  * Running on http://172.18.0.3:5001
+data-service-1  | Press CTRL+C to quit
+gateway-1       |  * Serving Flask app 'main'
+gateway-1       |  * Debug mode: off
+gateway-1       | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+gateway-1       |  * Running on all addresses (0.0.0.0)
+gateway-1       |  * Running on http://127.0.0.1:5000
+gateway-1       |  * Running on http://172.18.0.4:5000
+gateway-1       | Press CTRL+C to quit
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:12:13] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:12:13] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:12:13] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:12:13] "GET /api HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 01:12:13] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 01:12:13] "GET /api HTTP/1.1" 200 -
+jaeger-1        | {"level":"info","ts":1770253940.5509686,"caller":"grpc@v1.63.2/clientconn.go:332","msg":"[core][Channel #1]Channel exiting idle mode","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.553106,"caller":"grpc@v1.63.2/resolver_wrapper.go:197","msg":"[core][Channel #1]Resolver state updated: {\n  \"Addresses\": [\n    {\n      \"Addr\": \"127.0.0.1:4317\",\n      \"ServerName\": \"\",\n      \"Attributes\": null,\n      \"BalancerAttributes\": null,\n      \"Metadata\": null\n    }\n  ],\n  \"Endpoints\": [\n    {\n      \"Addresses\": [\n        {\n          \"Addr\": \"127.0.0.1:4317\",\n          \"ServerName\": \"\",\n          \"Attributes\": null,\n          \"BalancerAttributes\": null,\n          \"Metadata\": null\n        }\n      ],\n      \"Attributes\": null\n    }\n  ],\n  \"ServiceConfig\": null,\n  \"Attributes\": null\n} (resolver returned new addresses)","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5534139,"caller":"grpc@v1.63.2/balancer_wrapper.go:103","msg":"[core][Channel #1]Channel switches to new LB policy \"pick_first\"","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5534632,"caller":"grpc@v1.63.2/balancer_wrapper.go:170","msg":"[core][Channel #1 SubChannel #9]Subchannel created","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5534763,"caller":"grpc@v1.63.2/clientconn.go:531","msg":"[core][Channel #1]Channel Connectivity change to CONNECTING","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5535147,"caller":"grpc@v1.63.2/clientconn.go:1195","msg":"[core][Channel #1 SubChannel #9]Subchannel Connectivity change to CONNECTING","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5535233,"caller":"grpc@v1.63.2/clientconn.go:1310","msg":"[core][Channel #1 SubChannel #9]Subchannel picks a new address \"127.0.0.1:4317\" to connect","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.554458,"caller":"grpc@v1.63.2/clientconn.go:1195","msg":"[core][Channel #1 SubChannel #9]Subchannel Connectivity change to READY","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770253940.5545404,"caller":"grpc@v1.63.2/clientconn.go:531","msg":"[core][Channel #1]Channel Connectivity change to READY","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.7465827,"caller":"grpc@v1.63.2/resolver_wrapper.go:100","msg":"[core][Channel #1]Closing the name resolver","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.746685,"caller":"grpc@v1.63.2/balancer_wrapper.go:135","msg":"[core][Channel #1]ccBalancerWrapper: closing","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.7467031,"caller":"grpc@v1.63.2/clientconn.go:531","msg":"[core][Channel #1]Channel Connectivity change to IDLE","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.7467115,"caller":"grpc@v1.63.2/clientconn.go:366","msg":"[core][Channel #1]Channel entering idle mode","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.7467997,"caller":"grpc@v1.63.2/clientconn.go:1195","msg":"[core][Channel #1 SubChannel #9]Subchannel Connectivity change to SHUTDOWN","system":"grpc","grpc_log":true}
+jaeger-1        | {"level":"info","ts":1770255750.7468176,"caller":"grpc@v1.63.2/clientconn.go:866","msg":"[core][Channel #1 SubChannel #9]Subchannel deleted","system":"grpc","grpc_log":true}
+data-service-1  | 172.18.0.1 - - [05/Feb/2026 02:37:39] "GET /data HTTP/1.1" 200 -
+data-service-1  | 172.18.0.4 - - [05/Feb/2026 02:37:39] "GET /data HTTP/1.1" 200 -
+gateway-1       | 172.18.0.1 - - [05/Feb/2026 02:37:39] "GET /api HTTP/1.1" 200 -
+
+

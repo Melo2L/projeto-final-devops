@@ -10,3 +10,11 @@ services:
       - "5000:5000"
     depends_on:
       - data-service
+    
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    ports:
+        #UI do Jaeger
+      - "16686:16686"
+      #OTLP HTTP (recebe traces)
+      - "4318:4318"
