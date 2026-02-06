@@ -1,0 +1,14 @@
+services:
+  gateway:
+    environment:
+      - ENVIRONMENT=DEV
+  surf-data-service:
+    environment:
+      - ENVIRONMENT=DEV
+  notification-service:
+    environment:
+      - ENVIRONMENT=DEV
+  scheduler-service:
+    environment:
+      - ENVIRONMENT=DEV
+      - SCHEDULE_SECONDS=60
