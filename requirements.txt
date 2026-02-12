@@ -1,0 +1,10 @@
+# Requirements agregados para instalar dependências do projeto num único venv (enunciado - ponto 10).
+# Nota: cada microserviço mantém o seu próprio requirements.txt, mas este ficheiro permite instalar tudo de uma vez.
+-r services/gateway/requirements.txt
+-r services/surf-data-service/requirements.txt
+-r services/notification-service/requirements.txt
+-r services/scheduler-service/requirements.txt
+
+# Ferramentas DevSecOps / qualidade
+bandit==1.7.9
+pip-audit==2.7.3

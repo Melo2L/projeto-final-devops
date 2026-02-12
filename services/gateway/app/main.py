@@ -12,15 +12,18 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 app = Flask(__name__)
 
-resource = Resource.create({"service.name": "gateway"})
-provider = TracerProvider(resource=resource)
-trace.set_tracer_provider(provider)
+OTEL_DISABLED = os.getenv("OTEL_DISABLED", "0") == "1"
 
-otlp_exporter = OTLPSpanExporter(endpoint="http://jaeger:4318/v1/traces")
-provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
-
-FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
+if not OTEL_DISABLED:
+    resource = Resource.create({"service.name": "gateway"})
+    provider = TracerProvider(resource=resource)
+    trace.set_tracer_provider(provider)
+    
+    otlp_exporter = OTLPSpanExporter(endpoint="http://jaeger:4318/v1/traces")
+    provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+    
+    FlaskInstrumentor().instrument_app(app)
+    RequestsInstrumentor().instrument()
 
 ENV = os.getenv("ENVIRONMENT", "DEV")
 

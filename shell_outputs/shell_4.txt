@@ -1,0 +1,208 @@
+ubuntu@ubuntu-2204:~$ docker --version
+docker compose version
+git --version
+Docker version 29.2.0, build 0b9d198
+Docker Compose version v5.0.2
+git version 2.34.1
+ubuntu@ubuntu-2204:~$ ls
+ Desktop     projeto-final-devops       tarefa_m3_t2        Tarefa-M5-T4
+ Documents   projeto-final-devops.zip   tarefa_m3_t3        tarefamod4
+ Downloads   Public                     tarefa_m3_t3.zip    Templates
+ Home        snap                       tarefa_m3_t4        Videos
+ Music       stop                       tarefa-m4-t1.2
+ Pictures    tarefa7_entrega           'Tarefa - M4-T1.3'
+ubuntu@ubuntu-2204:~$ cd ~/Downloads/Projeto_Final_DevOps_Alisson_Melo/
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git checkout -b feature/surfpulse
+git status
+Switched to a new branch 'feature/surfpulse'
+On branch feature/surfpulse
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    README.md
+	modified:   docker-compose.yml
+	modified:   services/data-service/requirements.txt
+	modified:   services/gateway/app/main.py
+	modified:   services/gateway/requirements.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	Prints/
+	README.txt.pdf
+	shell_outputs/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git status
+On branch feature/surfpulse
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   Prints/Curl.png
+	new file:   Prints/Docker.png
+	new file:   Prints/Git.png
+	new file:   Prints/Git2.png
+	new file:   Prints/Jaeger.png
+	deleted:    README.md
+	new file:   README.txt.pdf
+	modified:   docker-compose.yml
+	modified:   services/data-service/requirements.txt
+	modified:   services/gateway/app/main.py
+	modified:   services/gateway/requirements.txt
+	new file:   shell_outputs/shell_1.txt
+	new file:   shell_outputs/shell_2.txt
+	new file:   shell_outputs/shell_3.txt
+
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git commit -m "Inicio do projeto SurfPulse - setup base"
+[feature/surfpulse b4bd038] Inicio do projeto SurfPulse - setup base
+ 14 files changed, 1340 insertions(+)
+ create mode 100644 Prints/Curl.png
+ create mode 100644 Prints/Docker.png
+ create mode 100644 Prints/Git.png
+ create mode 100644 Prints/Git2.png
+ create mode 100644 Prints/Jaeger.png
+ delete mode 100644 README.md
+ create mode 100644 README.txt.pdf
+ create mode 100644 shell_outputs/shell_1.txt
+ create mode 100644 shell_outputs/shell_2.txt
+ create mode 100644 shell_outputs/shell_3.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ mv services/data-service services/surf-data-service
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git status
+On branch feature/surfpulse
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    services/data-service/Dockerfile
+	deleted:    services/data-service/app/main.py
+	deleted:    services/data-service/requirements.txt
+	deleted:    services/data-service/tests/test_basic.py
+	deleted:    services/data-service/tests/test_data.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	services/surf-data-service/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose up -d --build
+[+] Building 0.1s (1/1) FINISHED                                                
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.25kB                                           0.0s
+[+] up 0/2
+ ⠙ Image projeto_final_devops_alisson_melo-data-service Building            0.3s
+ ⠙ Image projeto_final_devops_alisson_melo-gateway      Building            0.3s
+unable to prepare context: path "/home/ubuntu/Downloads/Projeto_Final_DevOps_Alisson_Melo/services/data-service" not found
+
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.yml
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git status
+On branch feature/surfpulse
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   docker-compose.yml
+	deleted:    services/data-service/Dockerfile
+	deleted:    services/data-service/app/main.py
+	deleted:    services/data-service/requirements.txt
+	deleted:    services/data-service/tests/test_basic.py
+	deleted:    services/data-service/tests/test_data.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	services/surf-data-service/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker system prune -f
+Deleted Containers:
+053c1c1f9f19e4cd5c4e04954165777b861040e73f7aee2f238ff7130da08eba
+2698f34fcb38af86a7e8482539afd5cb334939960f79f0f34bb5cf79a61bc7ad
+b34d38f8d227301ee01d9c531d5dfa733c31a2b3baab2f5bd5ba406b9e0d631f
+
+Deleted Networks:
+projeto-final-devops_default
+
+Deleted Images:
+deleted: sha256:09470acf29dafe4338da7398a336c79b3097ed1e611fa6a94a87ebeef412c45b
+deleted: sha256:4d8bc9d4bab86f38fb2aca8fcf4dda76fb10c4662600cc87109283be7df29a6e
+deleted: sha256:9ed4ad216f383430eb7cecf7aabfc8311f87b1a8c95bc432f0da3dea79e22549
+deleted: sha256:e9db26f6b9157a8556ebb312bd2750173812240651afe1fbec5058ecf25ff5e1
+deleted: sha256:d8fec50aa75bf23589bae8d7130ae675466ceb5f7f5e6685ca9e02ca1dce922f
+deleted: sha256:2eec59412ce5a52ed797b33e1d33db8659a07307d72904f836e6515bddc5fe57
+deleted: sha256:cfb9d8eb81962437e1a5ba6ec0b0872467ae4a577962ba82a1de2434a30602d4
+
+Deleted build cache objects:
+x05lzydpfqa0xhfa72hd6qe7r
+yjs2u99ozi5lnxc0ho4qho6nv
+k6yzp7i1p4ua0ddaimdtcmy59
+melas5w5vfz2lp3kd9tih40ou
+cf9u0ijl8pj49hnt93j99i6c1
+i7t2jyv6ypc0cgduicc0uufao
+zco6a5wyj1isz19szgbao0oz6
+rh8p3flx2hj7fgc0qakvml4zr
+lyohilbkzvqr33ubstejcwhxj
+uzjrwojw9azq7fg15n3r0bupl
+bcl5o64e1fgy11m3bg6xj2g1c
+lslqpkgza61fysrgttgpc0bnu
+ujo25e3i3x1nchk0ffpaj1w30
+tuyzk0p08uttu53rsv2tv9zfw
+jf7s3v7ubuiucx82axxj7bnfz
+eek19iaz3u3upd6kpgw3s53sr
+t5m0c0m4cfgqhexhpws8ty18c
+k1nz0rg3wlxbqsxgkes1p8f40
+rxjwfho9b9smnafrforye7tj1
+
+Total reclaimed space: 52.74MB
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose up -d --build
+[+] Building 16.1s (22/22) FINISHED                                             
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.28kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load build definition from Dockerfile     0.1s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load metadata for docker.io/library/pyth  1.2s
+ => [gateway internal] load .dockerignore                                  0.1s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service internal] load .dockerignore                        0.1s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service 1/6] FROM docker.io/library/python:3.11-slim@sha25  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.1s
+ => [gateway internal] load build context                                  0.1s
+ => => transferring context: 1.66kB                                        0.0s
+ => [surf-data-service internal] load build context                        0.1s
+ => => transferring context: 768B                                          0.0s
+ => CACHED [surf-data-service 2/6] WORKDIR /app                            0.0s
+ => [gateway 3/6] COPY requirements.txt .                                  0.1s
+ => [surf-data-service 3/6] COPY requirements.txt .                        0.1s
+ => [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt      13.2s
+ => [surf-data-service 4/6] RUN pip install --no-cache-dir -r requiremen  13.2s
+ => [gateway 5/6] COPY app ./app                                           0.2s
+ => [surf-data-service 5/6] COPY app ./app                                 0.1s
+ => [gateway 6/6] COPY tests ./tests                                       0.1s
+ => [surf-data-service 6/6] COPY tests ./tests                             0.1s
+ => [gateway] exporting to image                                           0.6s
+ => => exporting layers                                                    0.6s
+ => => writing image sha256:5c21856b9e48d257954b1b8720f8b02d845ac77b0d580  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gate  0.0s
+ => [surf-data-service] exporting to image                                 0.6s
+ => => exporting layers                                                    0.6s
+ => => writing image sha256:c9d739919980810ba194278cc3efac75e3dccf58b02a6  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf  0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [surf-data-service] resolving provenance for metadata file             0.0s
+[+] up 6/6
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service       Built   16.2s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                 Built   16.2s
+ ✔ Network projeto_final_devops_alisson_melo_default               Created 0.1s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Created 0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Created 0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Created 0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE                                                 COMMAND                  CREATED         STATUS         PORTS                                                                                                                           NAMES
+5029081e19c0   projeto_final_devops_alisson_melo-gateway             "python app/main.py"     6 seconds ago   Up 5 seconds   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+838bba2f4d5c   jaegertracing/all-in-one:1.57                         "/go/bin/all-in-one-…"   7 seconds ago   Up 6 seconds   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+786d6ba56b94   projeto_final_devops_alisson_melo-surf-data-service   "python app/main.py"     7 seconds ago   Up 6 seconds   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ 
+

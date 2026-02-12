@@ -1,0 +1,1472 @@
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s http://localhost:5000/health
+curl -s http://localhost:5001/health
+{"status":"healthy"}
+<!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE                                                 COMMAND                  CREATED         STATUS         PORTS                                                                                                                           NAMES
+5029081e19c0   projeto_final_devops_alisson_melo-gateway             "python app/main.py"     3 minutes ago   Up 3 minutes   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+838bba2f4d5c   jaegertracing/all-in-one:1.57                         "/go/bin/all-in-one-…"   3 minutes ago   Up 3 minutes   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+786d6ba56b94   projeto_final_devops_alisson_melo-surf-data-service   "python app/main.py"     3 minutes ago   Up 3 minutes   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/surf-data-service/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/surf-data-service/requirements.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+[+] down 4/4
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Removed 10.3s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Removed 0.3ss
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Removed 10.3s
+ ✔ Network projeto_final_devops_alisson_melo_default               Removed 0.1s
+[+] Building 1.8s (22/22) FINISHED                                              
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.28kB                                           0.0s
+ => [surf-data-service internal] load build definition from Dockerfile     0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [gateway internal] load metadata for docker.io/library/python:3.11-sl  0.9s
+ => [surf-data-service internal] load .dockerignore                        0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service 1/6] FROM docker.io/library/python:3.11-slim@sha25  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.1s
+ => [surf-data-service internal] load build context                        0.0s
+ => => transferring context: 3.66kB                                        0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 193B                                          0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requ  0.0s
+ => CACHED [surf-data-service 2/6] WORKDIR /app                            0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                    0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                 0.0s
+ => [surf-data-service 5/6] COPY app ./app                                 0.1s
+ => [gateway] exporting to image                                           0.0s
+ => => exporting layers                                                    0.0s
+ => => writing image sha256:5c21856b9e48d257954b1b8720f8b02d845ac77b0d580  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gate  0.0s
+ => [surf-data-service 6/6] COPY tests ./tests                             0.1s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [surf-data-service] exporting to image                                 0.1s
+ => => exporting layers                                                    0.1s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a33  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf  0.0s
+ => [surf-data-service] resolving provenance for metadata file             0.0s
+[+] up 6/6
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service       Built    1.9s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                 Built    1.9s
+ ✔ Network projeto_final_devops_alisson_melo_default               Created  0.1s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Created  0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s http://localhost:5001/health
+{"service":"surf-data-service","status":"healthy"}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5001/forecast?spot=carcavelos" | jq
+Command 'jq' not found, but can be installed with:
+sudo snap install jq  # version 1.5+dfsg-1, or
+sudo apt  install jq  # version 1.6-2.1ubuntu3.1
+See 'snap info jq' for additional versions.
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ sudo apt update
+sudo apt install -y jq
+Hit:1 https://download.docker.com/linux/ubuntu jammy InRelease
+Hit:2 https://apt.releases.hashicorp.com jammy InRelease                       
+Hit:3 http://security.ubuntu.com/ubuntu jammy-security InRelease               
+Hit:4 http://us.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:5 http://us.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:6 http://us.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+5 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  bridge-utils python3-attr python3-docker python3-dockerpty python3-docopt
+  python3-dotenv python3-jsonschema python3-pyrsistent python3-texttable
+  python3-websocket ubuntu-fan
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  libjq1 libonig5
+The following NEW packages will be installed:
+  jq libjq1 libonig5
+0 upgraded, 3 newly installed, 0 to remove and 5 not upgraded.
+Need to get 357 kB of archives.
+After this operation, 1087 kB of additional disk space will be used.
+Get:1 http://us.archive.ubuntu.com/ubuntu jammy/main amd64 libonig5 amd64 6.9.7.1-2build1 [172 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu jammy-updates/main amd64 libjq1 amd64 1.6-2.1ubuntu3.1 [133 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu jammy-updates/main amd64 jq amd64 1.6-2.1ubuntu3.1 [52,5 kB]
+Fetched 357 kB in 1s (392 kB/s)
+Selecting previously unselected package libonig5:amd64.
+(Reading database ... 267483 files and directories currently installed.)
+Preparing to unpack .../libonig5_6.9.7.1-2build1_amd64.deb ...
+Unpacking libonig5:amd64 (6.9.7.1-2build1) ...
+Selecting previously unselected package libjq1:amd64.
+Preparing to unpack .../libjq1_1.6-2.1ubuntu3.1_amd64.deb ...
+Unpacking libjq1:amd64 (1.6-2.1ubuntu3.1) ...
+Selecting previously unselected package jq.
+Preparing to unpack .../jq_1.6-2.1ubuntu3.1_amd64.deb ...
+Unpacking jq (1.6-2.1ubuntu3.1) ...
+Setting up libonig5:amd64 (6.9.7.1-2build1) ...
+Setting up libjq1:amd64 (1.6-2.1ubuntu3.1) ...
+Setting up jq (1.6-2.1ubuntu3.1) ...
+Processing triggers for man-db (2.10.2-1) ...
+Processing triggers for libc-bin (2.35-0ubuntu3.13) ...
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5001/forecast?spot=carcavelos" | jq
+{
+  "service": "surf-data-service",
+  "spot": "Carcavelos",
+  "spot_key": "carcavelos",
+  "temperature": {
+    "air_c": 13,
+    "water_c": null
+  },
+  "utc_hour": "2026-02-06T19:00:00Z",
+  "waves": {
+    "direction_deg": 271,
+    "height_m": 5.62,
+    "period_s": 12.5
+  },
+  "wind": {
+    "direction_deg": 254,
+    "speed_kmh": 18.3
+  }
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5000/api/report?spot=carcavelos" | jq
+parse error: Invalid numeric literal at line 1, column 10
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl http://localhost:5000/api/report?spot=carcavelos
+<!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/gateway/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/gateway/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/gateway/requirements.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+[+] down 4/4
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Removed 0.3ss
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Removed 10.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Removed 10.6s
+ ✔ Network projeto_final_devops_alisson_melo_default               Removed 0.1s
+[+] Building 1.8s (22/22) FINISHED                                              
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.28kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load build definition from Dockerfile     0.1s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load metadata for docker.io/library/pyth  0.9s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service internal] load .dockerignore                        0.0s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service 1/6] FROM docker.io/library/python:3.11-slim@sha25  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 1.66kB                                        0.0s
+ => [surf-data-service internal] load build context                        0.0s
+ => => transferring context: 190B                                          0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [gateway 2/6] WORKDIR /app                                      0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                 0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requ  0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                          0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                      0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                           0.0s
+ => [gateway 5/6] COPY app ./app                                           0.1s
+ => [surf-data-service] exporting to image                                 0.0s
+ => => exporting layers                                                    0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a33  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf  0.0s
+ => [gateway 6/6] COPY tests ./tests                                       0.2s
+ => [surf-data-service] resolving provenance for metadata file             0.0s
+ => [gateway] exporting to image                                           0.1s
+ => => exporting layers                                                    0.1s
+ => => writing image sha256:5ae8392cbc9db14660ed93303c72947d86f757facdb59  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gate  0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+[+] up 6/6
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service       Built    1.9s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                 Built    1.9s
+ ✔ Network projeto_final_devops_alisson_melo_default               Created  0.1s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Created  0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s http://localhost:5000/health | jq
+{
+  "env": "DEV",
+  "service": "gateway",
+  "status": "healthy"
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5000/api/report?spot=carcavelos" | jq
+{
+  "env": "DEV",
+  "report": {
+    "service": "surf-data-service",
+    "spot": "Carcavelos",
+    "spot_key": "carcavelos",
+    "temperature": {
+      "air_c": 13,
+      "water_c": null
+    },
+    "utc_hour": "2026-02-06T20:00:00Z",
+    "waves": {
+      "direction_deg": 271,
+      "height_m": 5.62,
+      "period_s": 12.5
+    },
+    "wind": {
+      "direction_deg": 254,
+      "speed_kmh": 18.3
+    }
+  },
+  "service": "gateway",
+  "spot": "carcavelos"
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5000/api/report?spot=carcavelos" > /dev/null
+curl -s "http://localhost:5000/api/report?spot=nazare" > /dev/null
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s "http://localhost:5000/api/report?spot=carcavelos" | jq
+{
+  "env": "DEV",
+  "report": {
+    "service": "surf-data-service",
+    "spot": "Carcavelos",
+    "spot_key": "carcavelos",
+    "temperature": {
+      "air_c": 13,
+      "water_c": null
+    },
+    "utc_hour": "2026-02-06T20:00:00Z",
+    "waves": {
+      "direction_deg": 271,
+      "height_m": 5.62,
+      "period_s": 12.5
+    },
+    "wind": {
+      "direction_deg": 254,
+      "speed_kmh": 18.3
+    }
+  },
+  "service": "gateway",
+  "spot": "carcavelos"
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ls services
+gateway  surf-data-service
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ mkdir -p services/notification-service/app services/notification-service/tests
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/requirements.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/Dockerfile
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/gateway/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+[+] down 4/4
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Removed 0.3ss
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Removed 10.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Removed 10.3s
+ ✔ Network projeto_final_devops_alisson_melo_default               Removed 0.1s
+[+] Building 1.8s (22/22) FINISHED                                              
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.28kB                                           0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load build definition from Dockerfile     0.0s
+ => => transferring dockerfile: 217B                                       0.0s
+ => [surf-data-service internal] load metadata for docker.io/library/pyth  0.9s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service internal] load .dockerignore                        0.0s
+ => => transferring context: 2B                                            0.0s
+ => [surf-data-service 1/6] FROM docker.io/library/python:3.11-slim@sha25  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 3.35kB                                        0.0s
+ => [surf-data-service internal] load build context                        0.0s
+ => => transferring context: 190B                                          0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [gateway 2/6] WORKDIR /app                                      0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                 0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requ  0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                          0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                      0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                           0.0s
+ => [gateway 5/6] COPY app ./app                                           0.1s
+ => [surf-data-service] exporting to image                                 0.0s
+ => => exporting layers                                                    0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a33  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf  0.0s
+ => [gateway 6/6] COPY tests ./tests                                       0.2s
+ => [surf-data-service] resolving provenance for metadata file             0.0s
+ => [gateway] exporting to image                                           0.1s
+ => => exporting layers                                                    0.1s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gate  0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+[+] up 6/6
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service       Built    1.9s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                 Built    1.9s
+ ✔ Network projeto_final_devops_alisson_melo_default               Created  0.1s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Created  0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Created  0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -X POST http://localhost:5000/internal/send-daily \
+-H "X-Internal-Token: dev-token" | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   265  100   265    0     0    566      0 --:--:-- --:--:-- --:--:--   567
+parse error: Invalid numeric literal at line 1, column 10
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -X POST http://localhost:5000/internal/send-daily \
+-H "X-Internal-Token: dev-token"
+<!doctype html>
+<html lang=en>
+<title>500 Internal Server Error</title>
+<h1>Internal Server Error</h1>
+<p>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</p>
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE                                                 COMMAND                  CREATED              STATUS              PORTS                                                                                                                           NAMES
+a7653f467cb6   projeto_final_devops_alisson_melo-gateway             "python app/main.py"     About a minute ago   Up About a minute   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+41c067bdb756   projeto_final_devops_alisson_melo-surf-data-service   "python app/main.py"     About a minute ago   Up About a minute   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+ec3b011d51ea   jaegertracing/all-in-one:1.57                         "/go/bin/all-in-one-…"   About a minute ago   Up About a minute   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs gateway --tail=100
+gateway-1  |     raise exception.with_traceback(exception.__traceback__)
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/opentelemetry/instrumentation/requests/__init__.py", line 255, in instrumented_send
+gateway-1  |     result = wrapped_send(
+gateway-1  |              ^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+gateway-1  |     r = adapter.send(request, **kwargs)
+gateway-1  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+gateway-1  |     raise ConnectionError(e, request=request)
+gateway-1  | requests.exceptions.ConnectionError: HTTPConnectionPool(host='notification-service', port=5002): Max retries exceeded with url: /send (Caused by NameResolutionError("HTTPConnection(host='notification-service', port=5002): Failed to resolve 'notification-service' ([Errno -3] Temporary failure in name resolution)"))
+gateway-1  | 172.18.0.1 - - [06/Feb/2026 20:08:55] "POST /internal/send-daily HTTP/1.1" 500 -
+gateway-1  | [2026-02-06 20:09:35,052] ERROR in app: Exception on /internal/send-daily [POST]
+gateway-1  | Traceback (most recent call last):
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+gateway-1  |     sock = connection.create_connection(
+gateway-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/util/connection.py", line 60, in create_connection
+gateway-1  |     for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+gateway-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/socket.py", line 974, in getaddrinfo
+gateway-1  |     for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+gateway-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  | socket.gaierror: [Errno -3] Temporary failure in name resolution
+gateway-1  | 
+gateway-1  | The above exception was the direct cause of the following exception:
+gateway-1  | 
+gateway-1  | Traceback (most recent call last):
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+gateway-1  |     response = self._make_request(
+gateway-1  |                ^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+gateway-1  |     conn.request(
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+gateway-1  |     self.endheaders()
+gateway-1  |   File "/usr/local/lib/python3.11/http/client.py", line 1298, in endheaders
+gateway-1  |     self._send_output(message_body, encode_chunked=encode_chunked)
+gateway-1  |   File "/usr/local/lib/python3.11/http/client.py", line 1058, in _send_output
+gateway-1  |     self.send(msg)
+gateway-1  |   File "/usr/local/lib/python3.11/http/client.py", line 996, in send
+gateway-1  |     self.connect()
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+gateway-1  |     self.sock = self._new_conn()
+gateway-1  |                 ^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 211, in _new_conn
+gateway-1  |     raise NameResolutionError(self.host, self, e) from e
+gateway-1  | urllib3.exceptions.NameResolutionError: HTTPConnection(host='notification-service', port=5002): Failed to resolve 'notification-service' ([Errno -3] Temporary failure in name resolution)
+gateway-1  | 
+gateway-1  | The above exception was the direct cause of the following exception:
+gateway-1  | 
+gateway-1  | Traceback (most recent call last):
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+gateway-1  |     resp = conn.urlopen(
+gateway-1  |            ^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+gateway-1  |     retries = retries.increment(
+gateway-1  |               ^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+gateway-1  |     raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+gateway-1  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  | urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='notification-service', port=5002): Max retries exceeded with url: /send (Caused by NameResolutionError("HTTPConnection(host='notification-service', port=5002): Failed to resolve 'notification-service' ([Errno -3] Temporary failure in name resolution)"))
+gateway-1  | 
+gateway-1  | During handling of the above exception, another exception occurred:
+gateway-1  | 
+gateway-1  | Traceback (most recent call last):
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/flask/app.py", line 1473, in wsgi_app
+gateway-1  |     response = self.full_dispatch_request()
+gateway-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/flask/app.py", line 882, in full_dispatch_request
+gateway-1  |     rv = self.handle_user_exception(e)
+gateway-1  |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/flask/app.py", line 880, in full_dispatch_request
+gateway-1  |     rv = self.dispatch_request()
+gateway-1  |          ^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/flask/app.py", line 865, in dispatch_request
+gateway-1  |     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+gateway-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/app/app/main.py", line 87, in send_daily
+gateway-1  |     s = requests.post(f"{NOTIFY_URL}/send", json=payload, timeout=15)
+gateway-1  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/api.py", line 115, in post
+gateway-1  |     return request("post", url, data=data, json=json, **kwargs)
+gateway-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/api.py", line 59, in request
+gateway-1  |     return session.request(method=method, url=url, **kwargs)
+gateway-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+gateway-1  |     resp = self.send(prep, **send_kwargs)
+gateway-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/opentelemetry/instrumentation/requests/__init__.py", line 333, in instrumented_send
+gateway-1  |     raise exception.with_traceback(exception.__traceback__)
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/opentelemetry/instrumentation/requests/__init__.py", line 255, in instrumented_send
+gateway-1  |     result = wrapped_send(
+gateway-1  |              ^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+gateway-1  |     r = adapter.send(request, **kwargs)
+gateway-1  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway-1  |   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+gateway-1  |     raise ConnectionError(e, request=request)
+gateway-1  | requests.exceptions.ConnectionError: HTTPConnectionPool(host='notification-service', port=5002): Max retries exceeded with url: /send (Caused by NameResolutionError("HTTPConnection(host='notification-service', port=5002): Failed to resolve 'notification-service' ([Errno -3] Temporary failure in name resolution)"))
+gateway-1  | 172.18.0.1 - - [06/Feb/2026 20:09:35] "POST /internal/send-daily HTTP/1.1" 500 -
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ mkdir -p services/notification-service/app services/notification-service/tests
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/requirements.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/notification-service/Dockerfile
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.yml
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+docker ps
+[+] down 4/4
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1           Removed              10.4s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1            Removed              0.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1 Removed              10.3s
+ ✔ Network projeto_final_devops_alisson_melo_default               Removed              0.2s
+[+] Building 7.1s (31/31) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 1.93kB                                                        0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [gateway internal] load metadata for docker.io/library/python:3.11-slim             1.2s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service internal] load .dockerignore                                  0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway internal] load .dockerignore                                               0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce77  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => CACHED [notification-service 2/6] WORKDIR /app                                      0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 1.09kB                                                     0.0s
+ => [gateway] exporting to image                                                        0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [surf-data-service] exporting to image                                              0.0s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => [notification-service 3/6] COPY requirements.txt .                                  0.2s
+ => [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.txt       4.6s
+ => [surf-data-service] resolving provenance for metadata file                          0.0s
+ => [gateway] resolving provenance for metadata file                                    0.0s
+ => [notification-service 5/6] COPY app ./app                                           0.1s
+ => [notification-service 6/6] COPY tests ./tests                                       0.1s
+ => [notification-service] exporting to image                                           0.3s
+ => => exporting layers                                                                 0.2s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => [notification-service] resolving provenance for metadata file                       0.0s
+[+] up 8/8
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              7.3s
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              7.3s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              7.3s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+CONTAINER ID   IMAGE                                                    COMMAND                  CREATED         STATUS                  PORTS                                                                                                                           NAMES
+518fe373f894   projeto_final_devops_alisson_melo-gateway                "python app/main.py"     1 second ago    Up Less than a second   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+d782865b7bf4   jaegertracing/all-in-one:1.57                            "/go/bin/all-in-one-…"   2 seconds ago   Up 1 second             4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+5ab191baef90   projeto_final_devops_alisson_melo-surf-data-service      "python app/main.py"     2 seconds ago   Up 1 second             0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+0ddfa3e48193   projeto_final_devops_alisson_melo-notification-service   "python app/main.py"     2 seconds ago   Up 1 second             0.0.0.0:5002->5002/tcp                                                                                                          projeto_final_devops_alisson_melo-notification-service-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s http://localhost:5002/health | jq
+{
+  "env": "DEV",
+  "service": "notification-service",
+  "status": "healthy"
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s -X POST "http://localhost:5000/internal/send-daily?spot=carcavelos" \
+-H "X-Internal-Token: dev-token" | jq
+{
+  "count": 2,
+  "results": [
+    {
+      "channel": "whatsapp",
+      "env": "DEV",
+      "status": "queued",
+      "to": "+351900000000"
+    },
+    {
+      "channel": "email",
+      "env": "DEV",
+      "status": "queued",
+      "to": "cliente@exemplo.com"
+    }
+  ],
+  "status": "sent"
+}
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=200 notification-service
+notification-service-1  |  * Serving Flask app 'main'
+notification-service-1  |  * Debug mode: off
+notification-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+notification-service-1  |  * Running on all addresses (0.0.0.0)
+notification-service-1  |  * Running on http://127.0.0.1:5002
+notification-service-1  |  * Running on http://172.18.0.3:5002
+notification-service-1  | Press CTRL+C to quit
+notification-service-1  | 172.18.0.1 - - [06/Feb/2026 20:15:40] "GET /health HTTP/1.1" 200 -
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:15:47] "POST /send HTTP/1.1" 200 -
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:15:47] "POST /send HTTP/1.1" 200 -
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ^C
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ mkdir -p services/scheduler-service/app services/scheduler-service/tests
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/scheduler-service/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/scheduler-service/requirements.txt
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/scheduler-service/Dockerfile
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.yml
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+docker ps
+[+] down 5/5
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Removed           10.5s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Removed           0.4s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Removed           10.5s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Removed           0.1s
+[+] Building 8.0s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 216B                                                    0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.1s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [scheduler-service internal] load metadata for docker.io/library/python:3.11-slim   0.9s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.2s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service internal] load .dockerignore                                  0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce7778e  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => CACHED [scheduler-service 2/6] WORKDIR /app                                         0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => [scheduler-service internal] load build context                                     0.1s
+ => => transferring context: 1.17kB                                                     0.0s
+ => [gateway] exporting to image                                                        0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [surf-data-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => [notification-service] exporting to image                                           0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => [scheduler-service 3/6] COPY requirements.txt .                                     0.2s
+ => [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt          5.5s
+ => [gateway] resolving provenance for metadata file                                    0.1s
+ => [surf-data-service] resolving provenance for metadata file                          0.1s
+ => [notification-service] resolving provenance for metadata file                       0.0s
+ => [scheduler-service 5/6] COPY app ./app                                              0.1s
+ => [scheduler-service 6/6] COPY tests ./tests                                          0.1s
+ => [scheduler-service] exporting to image                                              0.3s
+ => => exporting layers                                                                 0.2s
+ => => writing image sha256:bcbe6494bca70aeb7a3369a827d3df7ffd585422be3b651f4ea28ab740  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [scheduler-service] resolving provenance for metadata file                          0.0s
+[+] up 10/10
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              8.1s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              8.1s
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built              8.1s
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              8.1s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Created            0.1s
+
+
+
+docker ps
+
+^C^CCONTAINER ID   IMAGE                                                    COMMAND                  CREATED         STATUS         PORTS                                                                                                                           NAMES
+8a2efc74d6f9   projeto_final_devops_alisson_melo-gateway                "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+62296b1eff55   projeto_final_devops_alisson_melo-surf-data-service      "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+6abf42aba791   projeto_final_devops_alisson_melo-notification-service   "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5002->5002/tcp                                                                                                          projeto_final_devops_alisson_melo-notification-service-1
+f9f4542dab81   jaegertracing/all-in-one:1.57                            "/go/bin/all-in-one-…"   4 minutes ago   Up 4 minutes   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps
+CONTAINER ID   IMAGE                                                    COMMAND                  CREATED         STATUS         PORTS                                                                                                                           NAMES
+8a2efc74d6f9   projeto_final_devops_alisson_melo-gateway                "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+62296b1eff55   projeto_final_devops_alisson_melo-surf-data-service      "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+6abf42aba791   projeto_final_devops_alisson_melo-notification-service   "python app/main.py"     4 minutes ago   Up 4 minutes   0.0.0.0:5002->5002/tcp                                                                                                          projeto_final_devops_alisson_melo-notification-service-1
+f9f4542dab81   jaegertracing/all-in-one:1.57                            "/go/bin/all-in-one-…"   4 minutes ago   Up 4 minutes   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=200 scheduler-service
+scheduler-service-1  | [scheduler] iniciado. intervalo=60s
+scheduler-service-1  | ====================================
+scheduler-service-1  | [scheduler] ENV=DEV
+scheduler-service-1  | [scheduler] UTC=2026-02-06T20:19:21.178613Z
+scheduler-service-1  | [scheduler] POST http://gateway:5000/internal/send-daily?spot=carcavelos
+scheduler-service-1  | Traceback (most recent call last):
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+scheduler-service-1  |     sock = connection.create_connection(
+scheduler-service-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+scheduler-service-1  |     raise err
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+scheduler-service-1  |     sock.connect(sa)
+scheduler-service-1  | ConnectionRefusedError: [Errno 111] Connection refused
+scheduler-service-1  | 
+scheduler-service-1  | The above exception was the direct cause of the following exception:
+scheduler-service-1  | 
+scheduler-service-1  | Traceback (most recent call last):
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+scheduler-service-1  |     response = self._make_request(
+scheduler-service-1  |                ^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+scheduler-service-1  |     conn.request(
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+scheduler-service-1  |     self.endheaders()
+scheduler-service-1  |   File "/usr/local/lib/python3.11/http/client.py", line 1298, in endheaders
+scheduler-service-1  |     self._send_output(message_body, encode_chunked=encode_chunked)
+scheduler-service-1  |   File "/usr/local/lib/python3.11/http/client.py", line 1058, in _send_output
+scheduler-service-1  |     self.send(msg)
+scheduler-service-1  |   File "/usr/local/lib/python3.11/http/client.py", line 996, in send
+scheduler-service-1  |     self.connect()
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+scheduler-service-1  |     self.sock = self._new_conn()
+scheduler-service-1  |                 ^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 219, in _new_conn
+scheduler-service-1  |     raise NewConnectionError(
+scheduler-service-1  | urllib3.exceptions.NewConnectionError: HTTPConnection(host='gateway', port=5000): Failed to establish a new connection: [Errno 111] Connection refused
+scheduler-service-1  | 
+scheduler-service-1  | The above exception was the direct cause of the following exception:
+scheduler-service-1  | 
+scheduler-service-1  | Traceback (most recent call last):
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+scheduler-service-1  |     resp = conn.urlopen(
+scheduler-service-1  |            ^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+scheduler-service-1  |     retries = retries.increment(
+scheduler-service-1  |               ^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+scheduler-service-1  |     raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+scheduler-service-1  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  | urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='gateway', port=5000): Max retries exceeded with url: /internal/send-daily?spot=carcavelos (Caused by NewConnectionError("HTTPConnection(host='gateway', port=5000): Failed to establish a new connection: [Errno 111] Connection refused"))
+scheduler-service-1  | 
+scheduler-service-1  | During handling of the above exception, another exception occurred:
+scheduler-service-1  | 
+scheduler-service-1  | Traceback (most recent call last):
+scheduler-service-1  |   File "/app/app/main.py", line 31, in <module>
+scheduler-service-1  |     main()
+scheduler-service-1  |   File "/app/app/main.py", line 27, in main
+scheduler-service-1  |     run_once()
+scheduler-service-1  |   File "/app/app/main.py", line 19, in run_once
+scheduler-service-1  |     r = requests.post(url, headers=headers, timeout=20)
+scheduler-service-1  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/api.py", line 115, in post
+scheduler-service-1  |     return request("post", url, data=data, json=json, **kwargs)
+scheduler-service-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/api.py", line 59, in request
+scheduler-service-1  |     return session.request(method=method, url=url, **kwargs)
+scheduler-service-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+scheduler-service-1  |     resp = self.send(prep, **send_kwargs)
+scheduler-service-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+scheduler-service-1  |     r = adapter.send(request, **kwargs)
+scheduler-service-1  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scheduler-service-1  |   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 700, in send
+scheduler-service-1  |     raise ConnectionError(e, request=request)
+scheduler-service-1  | requests.exceptions.ConnectionError: HTTPConnectionPool(host='gateway', port=5000): Max retries exceeded with url: /internal/send-daily?spot=carcavelos (Caused by NewConnectionError("HTTPConnection(host='gateway', port=5000): Failed to establish a new connection: [Errno 111] Connection refused"))
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/scheduler-service/app/main.py
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+[+] down 6/6
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Removed           0.0ss
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Removed           10.5s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Removed           0.5s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Removed           10.4s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Removed           0.2s
+[+] Building 2.5s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 216B                                                    0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.1s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [surf-data-service internal] load metadata for docker.io/library/python:3.11-slim   1.2s
+ => [notification-service internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [surf-data-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce7778e  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [scheduler-service internal] load build context                                     0.1s
+ => => transferring context: 1.28kB                                                     0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => CACHED [scheduler-service 2/6] WORKDIR /app                                         0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => [notification-service] exporting to image                                           0.0s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => CACHED [scheduler-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => [scheduler-service 5/6] COPY app ./app                                              0.2s
+ => [gateway] exporting to image                                                        0.2s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [surf-data-service] exporting to image                                              0.2s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => [scheduler-service 6/6] COPY tests ./tests                                          0.3s
+ => [notification-service] resolving provenance for metadata file                       0.1s
+ => [gateway] resolving provenance for metadata file                                    0.0s
+ => [scheduler-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.1s
+ => => writing image sha256:47dd67a3f595410d60658e24d8784c688cf4bc466dbd9562a7b0816cc8  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [surf-data-service] resolving provenance for metadata file                          0.0s
+ => [scheduler-service] resolving provenance for metadata file                          0.0s
+[+] up 10/10
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              2.7s
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              2.7s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              2.7s
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built              2.7s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Created            0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=100 scheduler-service
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=100 scheduler-service
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker ps -a
+CONTAINER ID   IMAGE                                                    COMMAND                  CREATED         STATUS         PORTS                                                                                                                           NAMES
+8b48d8aa7f88   projeto_final_devops_alisson_melo-scheduler-service      "python app/main.py"     2 minutes ago   Up 2 minutes                                                                                                                                   projeto_final_devops_alisson_melo-scheduler-service-1
+8ae9c711c541   projeto_final_devops_alisson_melo-gateway                "python app/main.py"     2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp                                                                                                          projeto_final_devops_alisson_melo-gateway-1
+8a7ac974a15b   projeto_final_devops_alisson_melo-notification-service   "python app/main.py"     2 minutes ago   Up 2 minutes   0.0.0.0:5002->5002/tcp                                                                                                          projeto_final_devops_alisson_melo-notification-service-1
+bb36e04f1bcd   jaegertracing/all-in-one:1.57                            "/go/bin/all-in-one-…"   2 minutes ago   Up 2 minutes   4317/tcp, 5775/udp, 5778/tcp, 9411/tcp, 14250/tcp, 0.0.0.0:4318->4318/tcp, 14268/tcp, 0.0.0.0:16686->16686/tcp, 6831-6832/udp   projeto_final_devops_alisson_melo-jaeger-1
+2f3deaa169a9   projeto_final_devops_alisson_melo-surf-data-service      "python app/main.py"     2 minutes ago   Up 2 minutes   0.0.0.0:5001->5001/tcp                                                                                                          projeto_final_devops_alisson_melo-surf-data-service-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker logs --tail=200 projeto_final_devops_alisson_melo-scheduler-service-1
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano services/scheduler-service/Dockerfile
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose up -d --build
+[+] down 6/6
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Removed           10.3s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Removed           10.5s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Removed           0.4s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Removed           0.1s
+[+] Building 2.1s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 223B                                                    0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.1s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load metadata for docker.io/library/python:3.11-sl  0.9s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service internal] load .dockerignore                                  0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.0s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [scheduler-service internal] load build context                                     0.0s
+ => => transferring context: 116B                                                       0.0s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => CACHED [gateway 2/6] WORKDIR /app                                                   0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [scheduler-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [scheduler-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [scheduler-service 6/6] COPY tests ./tests                                   0.0s
+ => [surf-data-service] exporting to image                                              0.0s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => [scheduler-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8659929240b0682eeab192edad2abe22898b2fae084e3921b7dcff44f8  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [notification-service] exporting to image                                           0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => [gateway] exporting to image                                                        0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [surf-data-service] resolving provenance for metadata file                          0.1s
+ => [scheduler-service] resolving provenance for metadata file                          0.1s
+ => [notification-service] resolving provenance for metadata file                       0.0s
+ => [gateway] resolving provenance for metadata file                                    0.0s
+[+] up 10/10
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              2.2s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              2.2s
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built              2.2s
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              2.2s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.3s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.3s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.3s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Created            0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=200 scheduler-service
+scheduler-service-1  | [scheduler] iniciado. intervalo=60s
+scheduler-service-1  | ====================================
+scheduler-service-1  | [scheduler] ENV=DEV
+scheduler-service-1  | [scheduler] POST http://gateway:5000/internal/send-daily?spot=carcavelos
+scheduler-service-1  | [scheduler] tentativa 1/5 falhou: HTTPConnectionPool(host='gateway', port=5000): Max retries exceeded with url: /internal/send-daily?spot=carcavelos (Caused by NewConnectionError("HTTPConnection(host='gateway', port=5000): Failed to establish a new connection: [Errno 111] Connection refused"))
+scheduler-service-1  | [scheduler] status=200
+scheduler-service-1  | [scheduler] body={"count":2,"results":[{"channel":"whatsapp","env":"DEV","status":"queued","to":"+351900000000"},{"channel":"email","env":"DEV","status":"queued","to":"cliente@exemplo.com"}],"status":"sent"}
+scheduler-service-1  | 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose logs --tail=200 notification-service
+notification-service-1  |  * Serving Flask app 'main'
+notification-service-1  |  * Debug mode: off
+notification-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+notification-service-1  |  * Running on all addresses (0.0.0.0)
+notification-service-1  |  * Running on http://127.0.0.1:5002
+notification-service-1  |  * Running on http://172.18.0.4:5002
+notification-service-1  | Press CTRL+C to quit
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:32:10] "POST /send HTTP/1.1" 200 -
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:32:10] "POST /send HTTP/1.1" 200 -
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:33:11] "POST /send HTTP/1.1" 200 -
+notification-service-1  | 172.18.0.5 - - [06/Feb/2026 20:33:11] "POST /send HTTP/1.1" 200 -
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ^C
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ curl -s -X POST "http://localhost:5000/internal/send-daily?spot=carcavelos" \
+-H "X-Internal-Token: dev-token" > /dev/null
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.dev.yml 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.stg.yml 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ nano docker-compose.prd.yml 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+[+] Building 2.0s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 223B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [scheduler-service internal] load metadata for docker.io/library/python:3.11-slim   0.9s
+ => [notification-service internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce77  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [scheduler-service internal] load build context                                     0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => CACHED [gateway 2/6] WORKDIR /app                                                   0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [scheduler-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [scheduler-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [scheduler-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => [surf-data-service] exporting to image                                              0.0s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => [notification-service] exporting to image                                           0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => [scheduler-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8659929240b0682eeab192edad2abe22898b2fae084e3921b7dcff44f8  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [gateway] exporting to image                                                        0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [surf-data-service] resolving provenance for metadata file                          0.1s
+ => [scheduler-service] resolving provenance for metadata file                          0.1s
+ => [notification-service] resolving provenance for metadata file                       0.0s
+ => [gateway] resolving provenance for metadata file                                    0.0s
+[+] up 9/9
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built             2.1ss
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built             2.1ss
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built             2.1ss
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built             2.1ss
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Running           0.0ss
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Running           0.0ss
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Recreated         10.5s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Running           0.0s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Running           0.0s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
+[+] down 6/6
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Removed           10.3s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Removed           10.6s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Removed           0.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Removed           10.5s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Removed           0.1s
+[+] Building 1.6s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 223B                                                    0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.1s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load metadata for docker.io/library/python:3.11-sl  0.5s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce77  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [scheduler-service internal] load build context                                     0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => CACHED [scheduler-service 2/6] WORKDIR /app                                         0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [scheduler-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [scheduler-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [scheduler-service 6/6] COPY tests ./tests                                   0.0s
+ => [gateway] exporting to image                                                        0.0s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [notification-service] exporting to image                                           0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => [surf-data-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => [scheduler-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8659929240b0682eeab192edad2abe22898b2fae084e3921b7dcff44f8  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [gateway] resolving provenance for metadata file                                    0.1s
+ => [notification-service] resolving provenance for metadata file                       0.1s
+ => [surf-data-service] resolving provenance for metadata file                          0.1s
+ => [scheduler-service] resolving provenance for metadata file                          0.0s
+[+] up 10/10
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built              1.8s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Created            0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ docker compose down -v
+docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
+[+] down 6/6
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Removed           10.3s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Removed           10.4s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Removed           0.4s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Removed           10.5s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Removed           0.1s
+[+] Building 1.6s (40/40) FINISHED                                                           
+ => [internal] load local bake definitions                                              0.0s
+ => => reading from stdin 2.55kB                                                        0.0s
+ => [scheduler-service internal] load build definition from Dockerfile                  0.1s
+ => => transferring dockerfile: 223B                                                    0.0s
+ => [notification-service internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 228B                                                    0.0s
+ => [gateway internal] load build definition from Dockerfile                            0.1s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [surf-data-service internal] load build definition from Dockerfile                  0.0s
+ => => transferring dockerfile: 217B                                                    0.0s
+ => [notification-service internal] load metadata for docker.io/library/python:3.11-sl  0.5s
+ => [gateway internal] load .dockerignore                                               0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [notification-service internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [surf-data-service internal] load .dockerignore                                     0.0s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service internal] load .dockerignore                                     0.1s
+ => => transferring context: 2B                                                         0.0s
+ => [scheduler-service 1/6] FROM docker.io/library/python:3.11-slim@sha256:db27ce7778e  0.1s
+ => => resolve docker.io/library/python:3.11-slim@sha256:db27ce7778e5f581d5d97812ee577  0.1s
+ => [notification-service internal] load build context                                  0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [surf-data-service internal] load build context                                     0.1s
+ => => transferring context: 190B                                                       0.0s
+ => [scheduler-service internal] load build context                                     0.1s
+ => => transferring context: 116B                                                       0.0s
+ => [gateway internal] load build context                                               0.1s
+ => => transferring context: 193B                                                       0.0s
+ => CACHED [scheduler-service 2/6] WORKDIR /app                                         0.0s
+ => CACHED [notification-service 3/6] COPY requirements.txt .                           0.0s
+ => CACHED [notification-service 4/6] RUN pip install --no-cache-dir -r requirements.t  0.0s
+ => CACHED [notification-service 5/6] COPY app ./app                                    0.0s
+ => CACHED [notification-service 6/6] COPY tests ./tests                                0.0s
+ => [notification-service] exporting to image                                           0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:88be116c57d758cceb9c65887e8ae347fc16403e9bebb99e6bf79f7087  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-notification-serv  0.0s
+ => CACHED [surf-data-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [surf-data-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [surf-data-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [surf-data-service 6/6] COPY tests ./tests                                   0.0s
+ => CACHED [gateway 3/6] COPY requirements.txt .                                        0.0s
+ => CACHED [gateway 4/6] RUN pip install --no-cache-dir -r requirements.txt             0.0s
+ => CACHED [gateway 5/6] COPY app ./app                                                 0.0s
+ => CACHED [gateway 6/6] COPY tests ./tests                                             0.0s
+ => CACHED [scheduler-service 3/6] COPY requirements.txt .                              0.0s
+ => CACHED [scheduler-service 4/6] RUN pip install --no-cache-dir -r requirements.txt   0.0s
+ => CACHED [scheduler-service 5/6] COPY app ./app                                       0.0s
+ => CACHED [scheduler-service 6/6] COPY tests ./tests                                   0.0s
+ => [surf-data-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8a0e60899d5d491f6d140b7522cbac1c80972a8988a3351b590ab80a71  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-surf-data-service  0.0s
+ => [gateway] exporting to image                                                        0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:5569618686a32023f2a17ec18b6b3d95da2f97f74e141b0166ae893d0e  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-gateway            0.0s
+ => [scheduler-service] exporting to image                                              0.1s
+ => => exporting layers                                                                 0.0s
+ => => writing image sha256:8659929240b0682eeab192edad2abe22898b2fae084e3921b7dcff44f8  0.0s
+ => => naming to docker.io/library/projeto_final_devops_alisson_melo-scheduler-service  0.0s
+ => [notification-service] resolving provenance for metadata file                       0.1s
+ => [surf-data-service] resolving provenance for metadata file                          0.1s
+ => [scheduler-service] resolving provenance for metadata file                          0.0s
+ => [gateway] resolving provenance for metadata file                                    0.0s
+[+] up 10/10
+ ✔ Image projeto_final_devops_alisson_melo-notification-service       Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-gateway                    Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-scheduler-service          Built              1.8s
+ ✔ Image projeto_final_devops_alisson_melo-surf-data-service          Built              1.8s
+ ✔ Network projeto_final_devops_alisson_melo_default                  Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-jaeger-1               Created            0.3s
+ ✔ Container projeto_final_devops_alisson_melo-surf-data-service-1    Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-notification-service-1 Created            0.2s
+ ✔ Container projeto_final_devops_alisson_melo-gateway-1              Created            0.1s
+ ✔ Container projeto_final_devops_alisson_melo-scheduler-service-1    Created            0.1s
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ code .
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .github/workflows/ci-cd.yml
+git commit -m "Fix CI/CD pipeline endpoints and add DEV/STG/PRD compose smoke tests"
+git push
+[feature/surfpulse 6f3f491] Fix CI/CD pipeline endpoints and add DEV/STG/PRD compose smoke tests
+ 1 file changed, 150 insertions(+), 97 deletions(-)
+ rewrite .github/workflows/ci-cd.yml (63%)
+fatal: The current branch feature/surfpulse has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin feature/surfpulse
+
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git push --set-upstream origin feature/surfpulse
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 37, done.
+Counting objects: 100% (37/37), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (23/23), done.
+Writing objects: 100% (26/26), 841.54 KiB | 21.58 MiB/s, done.
+Total 26 (delta 5), reused 0 (delta 0), pack-reused 0
+
+remote: Resolving deltas: 100% (5/5), completed with 1 local object.
+remote: 
+remote: Create a pull request for 'feature/surfpulse' on GitHub by visiting:
+remote:      https://github.com/Melo2L/projeto-final-devops/pull/new/feature/surfpulse
+remote: 
+To https://github.com/Melo2L/projeto-final-devops.git
+ * [new branch]      feature/surfpulse -> feature/surfpulse
+Branch 'feature/surfpulse' set up to track remote branch 'feature/surfpulse' from 'origin'.
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ls -1
+docker-compose.dev.yml
+docker-compose.prd.yml
+docker-compose.stg.yml
+docker-compose.yml
+Prints
+README.txt.pdf
+services
+shell_outputs
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git status
+On branch feature/surfpulse
+Your branch is up to date with 'origin/feature/surfpulse'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   docker-compose.yml
+	deleted:    services/data-service/Dockerfile
+	deleted:    services/data-service/app/main.py
+	deleted:    services/data-service/requirements.txt
+	deleted:    services/data-service/tests/test_basic.py
+	deleted:    services/data-service/tests/test_data.py
+	modified:   services/gateway/app/main.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	docker-compose.dev.yml
+	docker-compose.prd.yml
+	docker-compose.stg.yml
+	services/notification-service/
+	services/scheduler-service/
+	services/surf-data-service/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git commit -m "Add missing compose env files and services for CI/CD pipeline"
+[feature/surfpulse a0e2d46] Add missing compose env files and services for CI/CD pipeline
+ 17 files changed, 345 insertions(+), 33 deletions(-)
+ create mode 100644 docker-compose.dev.yml
+ create mode 100644 docker-compose.prd.yml
+ create mode 100644 docker-compose.stg.yml
+ delete mode 100644 services/data-service/app/main.py
+ create mode 100644 services/notification-service/Dockerfile
+ create mode 100644 services/notification-service/app/main.py
+ create mode 100644 services/notification-service/requirements.txt
+ create mode 100644 services/scheduler-service/Dockerfile
+ create mode 100644 services/scheduler-service/app/main.py
+ create mode 100644 services/scheduler-service/requirements.txt
+ rename services/{data-service => surf-data-service}/Dockerfile (100%)
+ create mode 100644 services/surf-data-service/app/main.py
+ rename services/{data-service => surf-data-service}/requirements.txt (91%)
+ rename services/{data-service => surf-data-service}/tests/test_basic.py (100%)
+ rename services/{data-service => surf-data-service}/tests/test_data.py (100%)
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git push
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 32, done.
+Counting objects: 100% (32/32), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (18/18), done.
+Writing objects: 100% (26/26), 5.72 KiB | 1.43 MiB/s, done.
+Total 26 (delta 3), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (3/3), done.
+To https://github.com/Melo2L/projeto-final-devops.git
+   6f3f491..a0e2d46  feature/surfpulse -> feature/surfpulse
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .github/workflows/ci-cd.yml
+git commit -m "Add PR trigger and debug step for compose files"
+git push
+[feature/surfpulse 7f6d3a9] Add PR trigger and debug step for compose files
+ 1 file changed, 41 insertions(+), 13 deletions(-)
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 650 bytes | 650.00 KiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Melo2L/projeto-final-devops.git
+   a0e2d46..7f6d3a9  feature/surfpulse -> feature/surfpulse
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git commit -m "Add missing compose env files and services for CI/CD"
+On branch feature/surfpulse
+Your branch is up to date with 'origin/feature/surfpulse'.
+
+nothing to commit, working tree clean
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git push
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Everything up-to-date
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git log -1 --oneline
+7f6d3a9 (HEAD -> feature/surfpulse, origin/feature/surfpulse) Add PR trigger and debug step for compose files
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add .github/workflows/ci-cd.yml
+git commit -m "Fix compose path CI/CD"
+git push
+[feature/surfpulse 0a883b0] Fix compose path CI/CD
+ 1 file changed, 1 insertion(+)
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 417 bytes | 417.00 KiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Melo2L/projeto-final-devops.git
+   7f6d3a9..0a883b0  feature/surfpulse -> feature/surfpulse
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git checkout feature/surfpulse
+Already on 'feature/surfpulse'
+Your branch is up to date with 'origin/feature/surfpulse'.
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ls
+docker-compose.dev.yml  docker-compose.stg.yml  Prints          services
+docker-compose.prd.yml  docker-compose.yml      README.txt.pdf  shell_outputs
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git checkout main
+git merge feature/surfpulse
+git push
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+Updating a02e6e0..0a883b0
+Fast-forward
+ .github/workflows/ci-cd.yml                                     | 168 ++++++--
+ Prints/Curl.png                                                 | Bin 0 -> 45521 bytes
+ Prints/Docker.png                                               | Bin 0 -> 218587 bytes
+ Prints/Git.png                                                  | Bin 0 -> 109759 bytes
+ Prints/Git2.png                                                 | Bin 0 -> 37722 bytes
+ Prints/Jaeger.png                                               | Bin 0 -> 131772 bytes
+ README.md                                                       |   0
+ README.txt.pdf                                                  | Bin 0 -> 405800 bytes
+ docker-compose.dev.yml                                          |  14 +
+ docker-compose.prd.yml                                          |  14 +
+ docker-compose.stg.yml                                          |  14 +
+ docker-compose.yml                                              |  36 +-
+ services/data-service/app/main.py                               |  15 -
+ services/data-service/requirements.txt                          |   2 -
+ services/gateway/app/main.py                                    |  92 +++-
+ services/gateway/requirements.txt                               |   4 +
+ services/notification-service/Dockerfile                        |  11 +
+ services/notification-service/app/main.py                       |  34 ++
+ services/notification-service/requirements.txt                  |   2 +
+ services/scheduler-service/Dockerfile                           |  11 +
+ services/scheduler-service/app/main.py                          |  40 ++
+ services/scheduler-service/requirements.txt                     |   2 +
+ services/{data-service => surf-data-service}/Dockerfile         |   0
+ services/surf-data-service/app/main.py                          | 107 +++++
+ services/surf-data-service/requirements.txt                     |   7 +
+ .../{data-service => surf-data-service}/tests/test_basic.py     |   0
+ services/{data-service => surf-data-service}/tests/test_data.py |   0
+ shell_outputs/shell_1.txt                                       | 358 ++++++++++++++++
+ shell_outputs/shell_2.txt                                       | 636 ++++++++++++++++++++++++++++
+ shell_outputs/shell_3.txt                                       | 311 ++++++++++++++
+ 30 files changed, 1806 insertions(+), 72 deletions(-)
+ create mode 100644 Prints/Curl.png
+ create mode 100644 Prints/Docker.png
+ create mode 100644 Prints/Git.png
+ create mode 100644 Prints/Git2.png
+ create mode 100644 Prints/Jaeger.png
+ delete mode 100644 README.md
+ create mode 100644 README.txt.pdf
+ create mode 100644 docker-compose.dev.yml
+ create mode 100644 docker-compose.prd.yml
+ create mode 100644 docker-compose.stg.yml
+ delete mode 100644 services/data-service/app/main.py
+ delete mode 100644 services/data-service/requirements.txt
+ create mode 100644 services/notification-service/Dockerfile
+ create mode 100644 services/notification-service/app/main.py
+ create mode 100644 services/notification-service/requirements.txt
+ create mode 100644 services/scheduler-service/Dockerfile
+ create mode 100644 services/scheduler-service/app/main.py
+ create mode 100644 services/scheduler-service/requirements.txt
+ rename services/{data-service => surf-data-service}/Dockerfile (100%)
+ create mode 100644 services/surf-data-service/app/main.py
+ create mode 100644 services/surf-data-service/requirements.txt
+ rename services/{data-service => surf-data-service}/tests/test_basic.py (100%)
+ rename services/{data-service => surf-data-service}/tests/test_data.py (100%)
+ create mode 100644 shell_outputs/shell_1.txt
+ create mode 100644 shell_outputs/shell_2.txt
+ create mode 100644 shell_outputs/shell_3.txt
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+To https://github.com/Melo2L/projeto-final-devops.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/Melo2L/projeto-final-devops.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git pull --rebase origin main
+remote: Enumerating objects: 1, done.
+remote: Counting objects: 100% (1/1), done.
+remote: Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (1/1), 891 bytes | 891.00 KiB/s, done.
+From https://github.com/Melo2L/projeto-final-devops
+ * branch            main       -> FETCH_HEAD
+   a02e6e0..eb69638  main       -> origin/main
+Successfully rebased and updated refs/heads/main.
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git push origin main
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 45, done.
+Counting objects: 100% (45/45), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (24/24), done.
+Writing objects: 100% (36/36), 6.66 KiB | 6.66 MiB/s, done.
+Total 36 (delta 7), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (7/7), completed with 1 local object.
+To https://github.com/Melo2L/projeto-final-devops.git
+   eb69638..96d03e9  main -> main
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ mkdir -p services/notification-service/tests
+mkdir -p services/scheduler-service/tests
+
+touch services/notification-service/tests/.gitkeep
+touch services/scheduler-service/tests/.gitkeep
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ git add services/notification-service/tests/.gitkeep services/scheduler-service/tests/.gitkeep
+git commit -m "Add tests folders for notification and scheduler services"
+git push
+[main 3b0531e] Add tests folders for notification and scheduler services
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 services/notification-service/tests/.gitkeep
+ create mode 100644 services/scheduler-service/tests/.gitkeep
+Username for 'https://github.com': Melo2L
+Password for 'https://Melo2L@github.com': 
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 3 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (7/7), 624 bytes | 624.00 KiB/s, done.
+Total 7 (delta 3), reused 0 (delta 0), pack-reused 0
+
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/Melo2L/projeto-final-devops.git
+   96d03e9..3b0531e  main -> main
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ 
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ 
+
