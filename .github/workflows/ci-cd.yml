@@ -8,9 +8,55 @@ on:
   workflow_dispatch:
 
 jobs:
+  quality-gate:
+    name: Quality Gate - Tests + Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tooling (pytest, bandit, pip-audit)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest bandit pip-audit
+
+      - name: Install service requirements (if present)
+        run: |
+          set -e
+          for req in services/*/requirements.txt; do
+            if [ -f "$req" ]; then
+              echo "Installing: $req"
+              pip install -r "$req"
+            fi
+          done
+
+      - name: Run unit tests (pytest)
+        run: |
+          pytest -q
+
+      - name: SAST (Bandit)
+        run: |
+          bandit -r services -ll -ii
+
+      - name: Dependency vulnerability scan (pip-audit)
+        run: |
+          if [ -f "requirements.txt" ]; then
+            pip-audit -r requirements.txt
+          else
+            pip-audit
+          fi
+
+
   deploy-dev:
     name: DEV - Build, Deploy, Smoke Tests
     runs-on: ubuntu-latest
+    needs: quality-gate
 
     steps:
       - name: Checkout do codigo
