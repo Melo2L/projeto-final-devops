@@ -1,0 +1,47 @@
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ ls
+20260212-HLD-ProjetoFinal-DevOps.drawio.png  pytest.ini
+bandit_report.txt                            README.md
+docker-compose.dev.yml                       README.pdf
+docker-compose.prd.yml                       requirements.txt
+docker-compose.stg.yml                       services
+docker-compose.yml                           shell_outputs
+Prints                                       Testes_de_Vulnerabilidade
+Projeto_Final_Devops_Alisson_Melo.zip        venv
+ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ source venv/bin/activate
+(venv) ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ bandit -r . -ll -x ./venv
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.10.12
+Run started:2026-02-13 23:36:14.360565
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 390
+	Total lines skipped (#nosec): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 36
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 1
+		High: 35
+Files skipped (0):
+(venv) ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ pip freeze > requirements.txt
+(venv) ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ pip-audit -r requirements.txt
+Found 1 known vulnerability in 1 package
+Name     Version ID                  Fix Versions
+-------- ------- ------------------- -------------
+protobuf 4.25.8  GHSA-7gcm-g887-7qv7 5.29.6,6.33.5
+(venv) ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ pip check
+No broken requirements found.
+(venv) ubuntu@ubuntu-2204:~/Downloads/Projeto_Final_DevOps_Alisson_Melo$ 
+

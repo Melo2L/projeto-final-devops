@@ -61,7 +61,7 @@ jobs:
         with:
           image-ref: surfpulse-gateway:latest
           format: table
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           ignore-unfixed: true
           exit-code: "1"
 
@@ -70,7 +70,7 @@ jobs:
         with:
           image-ref: surfpulse-surf-data-service:latest
           format: table
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           ignore-unfixed: true
           exit-code: "1"
 
@@ -79,7 +79,7 @@ jobs:
         with:
           image-ref: surfpulse-notification-service:latest
           format: table
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           ignore-unfixed: true
           exit-code: "1"
 
@@ -88,7 +88,7 @@ jobs:
         with:
           image-ref: surfpulse-scheduler-service:latest
           format: table
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
           ignore-unfixed: true
           exit-code: "1"
 

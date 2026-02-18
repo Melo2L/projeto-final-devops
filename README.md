@@ -37,16 +37,12 @@ CI/CD automatizado e monitorização.
 
 
 <p align="center">
-  <img src="Prints/20260212-HLD-ProjetoFinal-DevOps.drawio.png" width="1000"/>
+  <img src="20260214-HLD-ProjetoFinal-DevOps.drawio.png" width="1000"/>
 </p>
 
-Este HLD demonstra a arquitetura geral da plataforma, incluindo
-microserviços containerizados, integração com API externa,
-observabilidade com Jaeger e pipeline CI/CD.
+O meu HLD apresenta a arquitetura geral da plataforma SurfPulse baseada em microsserviços conteinerizados, evidenciando a separação entre gateway, serviços internos de dados, notificações e agendamento. O acesso do utilizador ocorre através de um ponto de entrada público (Load Balancer), que encaminha requisições para o gateway-service, responsável pela orquestração das chamadas internas e integração com a API externa Open-Meteo. 
 
-O diagrama evidencia a separação em serviços independentes, a
-comunicação entre eles e o fluxo de deployment automatizado em
-diferentes ambientes (DEV, STG e PRD).
+A solução inclui observabilidade com Jaeger para rastreamento distribuído das requisições e monitorização do sistema. O agendamento automático é representado por um scheduler integrado a um serviço de triggering equivalente ao EventBridge. 
 
 A versão em PDF foi incluída para melhor visualização durante a avaliação.
 ------------------------------------------------------------------------
@@ -143,7 +139,7 @@ bandit -r services -ll -ii
 pip-audit -r requirements.txt
 ```
 
-Observação: os resultados (warnings/erros) devem ser usados como evidência no relatório.
+Prints dos testes na pasta Prints.
 
 
 ## Monitoramento
