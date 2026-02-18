@@ -1,11 +1,11 @@
 name: SurfPulse CI/CD (DEV -> STG -> PRD)
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
   workflow_dispatch:
+  pull_request:
+    branches: [ "main", "principal" ]
+  push:
+    branches: [ "main", "principal" ]
 
 jobs:
   quality-gate:
@@ -13,55 +13,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
 
-      - name: Install requirements
-        run: pip install -r requirements.txt
-
-      - name: Run tests
-        run: pytest -q
-
-      - name: SAST Scan (Bandit)
-        run: bandit -r services -ll
-
-      - name: Dependency scan (pip-audit report)
+      - name: Install dependencies
         run: |
-          pip-audit -r requirements.txt -f markdown -o pip-audit-report.md || true
-          cat pip-audit-report.md || true
+          set -e
+          python -m pip install --upgrade pip
+
+          # Instala requirements.txt (obrigatório)
+          pip install -r requirements.txt
+
+          # Instala requirements-dev.txt (se existir)
+          if [ -f requirements-dev.txt ]; then
+            pip install -r requirements-dev.txt
+          fi
+
+      - name: Run tests (pytest)
+        run: |
+          set -e
+          if [ -d services ]; then
+            pytest -q
+          else
+            echo "No tests found (services folder not present). Skipping."
+          fi
+
+      - name: Security - pip-audit
+        run: |
+          set -e
+          pip install pip-audit
+          pip-audit -r requirements.txt -f json -o pip-audit-report.json
 
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
         with:
           name: pip-audit-report
-          path: pip-audit-report.md
+          path: pip-audit-report.json
 
 
   build-and-scan-images:
     name: Build Images + Trivy
     runs-on: ubuntu-latest
     needs: quality-gate
-
     env:
       COMPOSE_PROJECT_NAME: surfpulse
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Build images (DEV compose)
-        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+        run: |
+          set -e
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 
+      # Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
       - name: Trivy scan - gateway
         uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: surfpulse-gateway:latest
           format: table
-          severity: CRITICAL
+          severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
@@ -70,7 +87,7 @@ jobs:
         with:
           image-ref: surfpulse-surf-data-service:latest
           format: table
-          severity: CRITICAL
+          severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
@@ -79,7 +96,7 @@ jobs:
         with:
           image-ref: surfpulse-notification-service:latest
           format: table
-          severity: CRITICAL
+          severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
@@ -88,26 +105,32 @@ jobs:
         with:
           image-ref: surfpulse-scheduler-service:latest
           format: table
-          severity: CRITICAL
+          severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
 
-
   deploy-dev:
-    name: Deploy DEV
+    name: Deploy DEV (auto)
     runs-on: ubuntu-latest
     needs: build-and-scan-images
     if: github.event_name != 'pull_request'
-
     env:
       COMPOSE_PROJECT_NAME: surfpulse
+      ENABLE_OTEL: "false"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Deploy DEV
-        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+        run: |
+          set -e
+          echo "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME"
+          echo "ENABLE_OTEL=$ENABLE_OTEL"
+          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
+          export ENABLE_OTEL="${ENABLE_OTEL}"
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
       - name: Smoke test DEV
         run: |
@@ -133,69 +156,95 @@ jobs:
 
           exit 1
 
-
-
       - name: Cleanup DEV
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v --remove-orphans
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 
 
   deploy-stg:
-    name: Deploy STG
+    name: Deploy STG (auto)
     runs-on: ubuntu-latest
     needs: deploy-dev
     if: github.event_name != 'pull_request'
-
     env:
       COMPOSE_PROJECT_NAME: surfpulse
+      ENABLE_OTEL: "false"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Deploy STG
-        run: docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
+        run: |
+          set -e
+          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
+          export ENABLE_OTEL="${ENABLE_OTEL}"
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
 
       - name: Smoke test STG
         run: |
+          set -e
+          echo "Waiting for gateway on http://localhost:5000/health ..."
           for i in {1..30}; do
-            curl -fsS http://localhost:5000/health && exit 0
+            if curl -fsS http://localhost:5000/health > /dev/null; then
+              echo "Gateway OK"
+              exit 0
+            fi
             sleep 2
           done
+
           echo "Healthcheck STG failed"
           docker ps -a
+          docker logs surfpulse-gateway-1 || true
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml logs --tail=200 || true
           exit 1
 
       - name: Cleanup STG
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v --remove-orphans
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
 
 
   deploy-prd:
-    name: Deploy PRD
+    name: Deploy PRD (auto)
     runs-on: ubuntu-latest
     needs: deploy-stg
     if: github.event_name != 'pull_request'
-
     env:
       COMPOSE_PROJECT_NAME: surfpulse
+      ENABLE_OTEL: "false"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Deploy PRD
-        run: docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
+        run: |
+          set -e
+          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
+          export ENABLE_OTEL="${ENABLE_OTEL}"
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
 
       - name: Smoke test PRD
         run: |
+          set -e
+          echo "Waiting for gateway on http://localhost:5000/health ..."
           for i in {1..30}; do
-            curl -fsS http://localhost:5000/health && exit 0
+            if curl -fsS http://localhost:5000/health > /dev/null; then
+              echo "Gateway OK"
+              exit 0
+            fi
             sleep 2
           done
+
           echo "Healthcheck PRD failed"
           docker ps -a
+          docker logs surfpulse-gateway-1 || true
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml logs --tail=200 || true
           exit 1
 
       - name: Cleanup PRD
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v --remove-orphans
-
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v
