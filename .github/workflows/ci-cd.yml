@@ -75,16 +75,16 @@ jobs:
 
       - name: Tag images with SHA
         run: |
-          docker tag surfpulse-gateway:${GITHUB_SHA} surfpulse-gateway:
-          docker tag surfpulse-surf-data-service:${GITHUB_SHA} surfpulse-surf-data-service:
-          docker tag surfpulse-notification-service:${GITHUB_SHA} surfpulse-notification-service:
-          docker tag surfpulse-scheduler-service:${GITHUB_SHA} surfpulse-scheduler-service:
+          docker tag surfpulse-gateway:${{ github.sha }} surfpulse-gateway:
+          docker tag surfpulse-surf-data-service:${{ github.sha }} surfpulse-surf-data-service:
+          docker tag surfpulse-notification-service:${{ github.sha }} surfpulse-notification-service:
+          docker tag surfpulse-scheduler-service:${{ github.sha }} surfpulse-scheduler-service:
 
       # Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
       - name: Trivy scan - gateway
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-gateway:${GITHUB_SHA}
+          image-ref: surfpulse-gateway:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -93,7 +93,7 @@ jobs:
       - name: Trivy scan - surf-data-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-surf-data-service:${GITHUB_SHA}
+          image-ref: surfpulse-surf-data-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -102,7 +102,7 @@ jobs:
       - name: Trivy scan - notification-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-notification-service:${GITHUB_SHA}
+          image-ref: surfpulse-notification-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -111,7 +111,7 @@ jobs:
       - name: Trivy scan - scheduler-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-scheduler-service:${GITHUB_SHA}
+          image-ref: surfpulse-scheduler-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -188,7 +188,7 @@ jobs:
           set -e
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
-          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "APP_TAG=${{ github.sha }}" > .env
           echo "REGISTRY=surfpulse" >> .env
           docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --no-build
 
@@ -235,7 +235,7 @@ jobs:
           set -e
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
-          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "APP_TAG=${{ github.sha }}" > .env
           echo "REGISTRY=surfpulse" >> .env
           docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
 
