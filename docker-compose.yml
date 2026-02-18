@@ -24,6 +24,7 @@ services:
       - "5000:5000"
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
+      - ENABLE_OTEL=false
       - INTERNAL_TOKEN=${INTERNAL_TOKEN:-dev-token}
       - SURF_DATA_URL=http://surf-data-service:5001
       - NOTIFY_URL=http://notification-service:5002
