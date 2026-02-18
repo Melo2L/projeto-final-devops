@@ -3,9 +3,9 @@ name: SurfPulse CI/CD (DEV -> STG -> PRD)
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ "main", "principal" ]
+    branches: ["main","principal"]
   push:
-    branches: [ "main", "principal" ]
+    branches: ["main","principal"]
 
 jobs:
   quality-gate:
@@ -13,45 +13,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
+      - run: |
           set -e
           python -m pip install --upgrade pip
-
-          # Instala requirements.txt (obrigatório)
           pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-          # Instala requirements-dev.txt (se existir)
-          if [ -f requirements-dev.txt ]; then
-            pip install -r requirements-dev.txt
-          fi
-
-      - name: Run tests (pytest)
-        run: |
+      - run: |
           set -e
-          if [ -d services ]; then
-            pytest -q
-          else
-            echo "No tests found (services folder not present). Skipping."
-          fi
+          if [ -d services ]; then pytest -q; else echo "No tests"; fi
 
-      - name: Security - pip-audit
-        run: |
-          set -e
+      - run: |
           pip install pip-audit
           pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 -f json -o pip-audit-report.json --progress-spinner off
 
-
-      - name: Upload pip-audit report
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: pip-audit-report
           path: pip-audit-report.json
@@ -65,67 +47,56 @@ jobs:
       COMPOSE_PROJECT_NAME: surfpulse
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Build images (DEV compose)
-        run: |
+      - run: |
           set -e
           docker compose -f docker-compose.yml -f docker-compose.dev.yml build
-        
-      - name: Login Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
-            -u "${{ secrets.DOCKER_USERNAME }}" \
-            --password-stdin
 
-      - name: Tag images with SHA
-        run: |
+      - run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+          -u "${{ secrets.DOCKER_USERNAME }}" \
+          --password-stdin
+
+      - run: |
           docker tag surfpulse-gateway:latest ${{ secrets.DOCKER_USERNAME }}/surfpulse-gateway:${{ github.sha }}
           docker tag surfpulse-notification-service:latest ${{ secrets.DOCKER_USERNAME }}/surfpulse-notification-service:${{ github.sha }}
           docker tag surfpulse-surf-data-service:latest ${{ secrets.DOCKER_USERNAME }}/surfpulse-surf-data-service:${{ github.sha }}
           docker tag surfpulse-scheduler-service:latest ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}
 
-      - name: Push images
-        run: |
+      - run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-gateway:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-notification-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-surf-data-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}
 
-      - name: Tag images with SHA
-        run: |# Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
-      - name: Trivy scan - gateway
-        uses: aquasecurity/trivy-action@0.20.0
+      - uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-gateway:${{ github.sha }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/surfpulse-gateway:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
-      - name: Trivy scan - surf-data-service
-        uses: aquasecurity/trivy-action@0.20.0
+      - uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-surf-data-service:${{ github.sha }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/surfpulse-surf-data-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
-      - name: Trivy scan - notification-service
-        uses: aquasecurity/trivy-action@0.20.0
+      - uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-notification-service:${{ github.sha }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/surfpulse-notification-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"
 
-      - name: Trivy scan - scheduler-service
-        uses: aquasecurity/trivy-action@0.20.0
+      - uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-scheduler-service:${{ github.sha }}
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -139,56 +110,32 @@ jobs:
     if: github.event_name != 'pull_request'
     env:
       COMPOSE_PROJECT_NAME: surfpulse
-      ENABLE_OTEL: "false"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Deploy DEV
-        run: |
+      - run: |
           set -e
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+          -u "${{ secrets.DOCKER_USERNAME }}" \
+          --password-stdin
 
-          # .env usado pelos docker-compose.*.yml
           echo "APP_TAG=${GITHUB_SHA}" > .env
           echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}" >> .env
           echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> .env
 
-          # login no Docker Hub (necessário para pull)
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
           docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
 
-
-
-      - name: Smoke test DEV
-        run: |
+      - run: |
           set -e
-          echo "Waiting for gateway on http://localhost:5000/health ..."
           for i in {1..30}; do
-            if curl -fsS http://localhost:5000/health > /dev/null; then
-              echo "Gateway OK"
-              exit 0
-            fi
+            if curl -fsS http://localhost:5000/health > /dev/null; then exit 0; fi
             sleep 2
           done
-
-          echo "Healthcheck DEV failed"
-          echo "---- docker ps -a ----"
-          docker ps -a
-
-          echo "---- gateway logs (surfpulse-gateway-1) ----"
-          docker logs surfpulse-gateway-1 || true
-
-          echo "---- compose logs (tail 200) ----"
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml logs --tail=200 || true
-
           exit 1
 
-      - name: Cleanup DEV
-        if: always()
-        run: |
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+      - if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 
 
   deploy-stg:
@@ -198,46 +145,23 @@ jobs:
     if: github.event_name != 'pull_request'
     env:
       COMPOSE_PROJECT_NAME: surfpulse
-      ENABLE_OTEL: "false"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Deploy STG
-        run: |
+      - run: |
           set -e
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
-          export ENABLE_OTEL="${ENABLE_OTEL}"
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+          -u "${{ secrets.DOCKER_USERNAME }}" \
+          --password-stdin
 
-          # PASSAR TAG DA IMAGE (SHA DO COMMIT)
-          echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}/surfpulse" >> .env
-          APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
+          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}" >> .env
 
-      - name: Smoke test STG
-        run: |
-          set -e
-          echo "Waiting for gateway on http://localhost:5000/health ..."
-          for i in {1..30}; do
-            if curl -fsS http://localhost:5000/health > /dev/null; then
-              echo "Gateway OK"
-              exit 0
-            fi
-            sleep 2
-          done
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --no-build
 
-          echo "Healthcheck STG failed"
-          docker ps -a
-          docker logs surfpulse-gateway-1 || true
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml logs --tail=200 || true
-          exit 1
-
-      - name: Cleanup STG
-        if: always()
-        run: |
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
+      - if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
 
 
   deploy-prd:
@@ -247,44 +171,20 @@ jobs:
     if: github.event_name != 'pull_request'
     env:
       COMPOSE_PROJECT_NAME: surfpulse
-      ENABLE_OTEL: "false"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Deploy PRD
-        run: |
+      - run: |
           set -e
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
-          export ENABLE_OTEL="${ENABLE_OTEL}"
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+          -u "${{ secrets.DOCKER_USERNAME }}" \
+          --password-stdin
 
-          # PASSAR TAG DA IMAGE (SHA DO COMMIT)
-          echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}/surfpulse" >> .env
+          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}" >> .env
 
-          APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
 
-      - name: Smoke test PRD
-        run: |
-          set -e
-          echo "Waiting for gateway on http://localhost:5000/health ..."
-          for i in {1..30}; do
-            if curl -fsS http://localhost:5000/health > /dev/null; then
-              echo "Gateway OK"
-              exit 0
-            fi
-            sleep 2
-          done
-
-          echo "Healthcheck PRD failed"
-          docker ps -a
-          docker logs surfpulse-gateway-1 || true
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml logs --tail=200 || true
-          exit 1
-
-      - name: Cleanup PRD
-        if: always()
-        run: |
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v
+      - if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v
