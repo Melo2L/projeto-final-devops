@@ -1,4 +1,4 @@
-name: SurfPulse CI/CD (DEV -> STG -> PRD)
+name: SurfPulse CI/CD (DEV auto -> STG/PRD manual)
 
 on:
   push:
@@ -7,37 +7,33 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+concurrency:
+  group: surfpulse-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-
   quality-gate:
-    name: Quality Gate - Tests + Security
+    name: Quality Gate (Tests + SAST + Deps)
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout do codigo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install tooling
-        run: |
-          pip install pytest bandit pip-audit
-
-      - name: Install project requirements
-        run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install requirements
+        run: pip install -r requirements.txt
 
       - name: Run tests
         run: pytest -q
 
-      - name: SAST Scan (Bandit)
-        run: bandit -r . -ll
+      - name: SAST (Bandit)
+        run: bandit -r services -ll
 
-      # 🔥 pip-audit SEM quebrar pipeline (gera relatório)
-      - name: Dependency vulnerability scan (pip-audit report)
+      - name: Dependency scan (pip-audit report)
         run: |
           pip-audit -r requirements.txt -f markdown -o pip-audit-report.md || true
           cat pip-audit-report.md || true
@@ -48,71 +44,120 @@ jobs:
           name: pip-audit-report
           path: pip-audit-report.md
 
-
-  deploy-dev:
-    name: DEV - Build, Deploy, Smoke Tests
+  build-and-scan-images:
+    name: Build Images + Trivy
     runs-on: ubuntu-latest
     needs: quality-gate
+    env:
+      COMPOSE_PROJECT_NAME: surfpulse
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build + Deploy DEV
+      - name: Build images (DEV compose)
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+
+      - name: Trivy scan - gateway
+  	run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-gateway
+
+      - name: Trivy scan - surf-data-service
+  	run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-surf-data-service
+
+      - name: Trivy scan - notification-service
+  	run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-notification-service
+
+      - name: Trivy scan - scheduler-service
+  	run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-scheduler-service
+
+
+  deploy-dev:
+    name: Deploy DEV (auto)
+    runs-on: ubuntu-latest
+    needs: build-and-scan-images
+    env:
+      COMPOSE_PROJECT_NAME: surfpulse
+
+    if: github.event_name != 'pull_request'
+    environment: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy DEV
         run: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
-      - name: Smoke tests DEV
+      - name: Smoke test DEV (/health)
         run: |
           for i in {1..30}; do
-            curl -s http://localhost:5000/health && break
+            curl -fsS http://localhost:5000/health && exit 0
             sleep 2
           done
+          echo "Healthcheck DEV falhou"
+          docker ps -a
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml logs --tail=200
+          exit 1
 
       - name: Cleanup DEV
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
-
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v --remove-orphans
 
   deploy-stg:
-    name: STG - Build, Deploy, Smoke Tests
+    name: Deploy STG (manual approval)
     runs-on: ubuntu-latest
     needs: deploy-dev
+    env:
+      COMPOSE_PROJECT_NAME: surfpulse
+    if: github.event_name != 'pull_request'
+    environment: stg
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build + Deploy STG
+      - name: Deploy STG
         run: docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
 
-      - name: Smoke tests STG
+      - name: Smoke test STG (/health)
         run: |
           for i in {1..30}; do
-            curl -s http://localhost:5000/health && break
+            curl -fsS http://localhost:5000/health && exit 0
             sleep 2
           done
+          echo "Healthcheck STG falhou"
+          docker ps -a
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml logs --tail=200
+          exit 1
 
       - name: Cleanup STG
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v
-
+        run: docker compose -f docker-compose.yml -f docker-compose.stg.yml down -v --remove-orphans
 
   deploy-prd:
-    name: PRD - Build, Deploy, Smoke Tests
+    name: Deploy PRD (manual approval)
     runs-on: ubuntu-latest
     needs: deploy-stg
+    env:
+      COMPOSE_PROJECT_NAME: surfpulse
+    if: github.event_name != 'pull_request'
+    environment: prd
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build + Deploy PRD
+      - name: Deploy PRD
         run: docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
 
-      - name: Smoke tests PRD
+      - name: Smoke test PRD (/health)
         run: |
           for i in {1..30}; do
-            curl -s http://localhost:5000/health && break
+            curl -fsS http://localhost:5000/health && exit 0
             sleep 2
           done
+          echo "Healthcheck PRD falhou"
+          docker ps -a
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml logs --tail=200
+          exit 1
 
       - name: Cleanup PRD
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v
+        run: docker compose -f docker-compose.yml -f docker-compose.prd.yml down -v --remove-orphans
+
