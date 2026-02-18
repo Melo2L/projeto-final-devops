@@ -137,7 +137,7 @@ jobs:
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
           echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=surfpulse" >> .env
+          echo "REGISTRY=Melo2L" >> .env
           APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
 
 
@@ -192,7 +192,7 @@ jobs:
 
           # PASSAR TAG DA IMAGE (SHA DO COMMIT)
           echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=surfpulse" >> .env
+          echo "REGISTRY=Melo2L" >> .env
           APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
 
       - name: Smoke test STG
@@ -240,7 +240,7 @@ jobs:
 
           # PASSAR TAG DA IMAGE (SHA DO COMMIT)
           echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=surfpulse" >> .env
+          echo "REGISTRY=Melo2L" >> .env
 
           APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
 
