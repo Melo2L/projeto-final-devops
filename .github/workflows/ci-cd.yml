@@ -134,6 +134,7 @@ jobs:
       - name: Deploy DEV
         run: |
           set -e
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
           echo "APP_TAG=${{ github.sha }}" > .env
@@ -187,6 +188,7 @@ jobs:
       - name: Deploy STG
         run: |
           set -e
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
 
@@ -235,6 +237,7 @@ jobs:
       - name: Deploy PRD
         run: |
           set -e
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
 
