@@ -57,9 +57,8 @@ jobs:
         run: docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 
       - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y trivy
+  	uses: aquasecurity/trivy-action@0.20.0
+
 
       - name: Show built images (debug)
         run: docker images
