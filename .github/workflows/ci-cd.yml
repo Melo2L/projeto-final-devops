@@ -94,13 +94,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}
 
       - name: Tag images with SHA
-        run: |
-          docker tag surfpulse-gateway:latest surfpulse-gateway:${{ github.sha }}
-          docker tag surfpulse-surf-data-service:latest surfpulse-surf-data-service:${{ github.sha }}
-          docker tag surfpulse-notification-service:latest surfpulse-notification-service:${{ github.sha }}
-          docker tag surfpulse-scheduler-service:latest surfpulse-scheduler-service:${{ github.sha }}
-
-      # Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
+        run: |# Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
       - name: Trivy scan - gateway
         uses: aquasecurity/trivy-action@0.20.0
         with:
@@ -154,12 +148,17 @@ jobs:
       - name: Deploy DEV
         run: |
           set -e
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
-          export ENABLE_OTEL="${ENABLE_OTEL}"
-          echo "APP_TAG=${{ github.sha }}" > .env
-          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}/surfpulse" >> .env
-          APP_TAG=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml up -d --no-build
+
+          # .env usado pelos docker-compose.*.yml
+          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> .env
+
+          # login no Docker Hub (necessário para pull)
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
+
 
 
       - name: Smoke test DEV
