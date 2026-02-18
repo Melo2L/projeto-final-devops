@@ -75,10 +75,10 @@ jobs:
 
       - name: Tag images with SHA
         run: |
-          docker tag surfpulse-gateway:latest surfpulse-gateway:${{ github.sha }}:
-          docker tag surfpulse-surf-data-service:latest surfpulse-surf-data-service:${{ github.sha }}:
-          docker tag surfpulse-notification-service:latest surfpulse-notification-service:${{ github.sha }}:
-          docker tag surfpulse-scheduler-service:latest surfpulse-scheduler-service:${{ github.sha }}:
+          docker tag surfpulse-gateway:latest surfpulse-gateway:${{ github.sha }}
+          docker tag surfpulse-surf-data-service:latest surfpulse-surf-data-service:${{ github.sha }}
+          docker tag surfpulse-notification-service:latest surfpulse-notification-service:${{ github.sha }}
+          docker tag surfpulse-scheduler-service:latest surfpulse-scheduler-service:${{ github.sha }}
 
       # Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
       - name: Trivy scan - gateway
