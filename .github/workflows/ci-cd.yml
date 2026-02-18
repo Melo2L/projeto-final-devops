@@ -111,13 +111,28 @@ jobs:
 
       - name: Smoke test DEV
         run: |
+          set -e
+          echo "Waiting for gateway..."
           for i in {1..30}; do
-            curl -fsS http://localhost:5000/health && exit 0
+            if curl -fsS http://localhost:5000/health > /dev/null; then
+              echo "Gateway is healthy"
+              exit 0
+            fi
             sleep 2
           done
+
           echo "Healthcheck DEV failed"
+          echo "---- docker ps ----"
           docker ps -a
+
+          echo "---- gateway logs ----"
+          docker logs surfpulse-gateway-1 || true
+
+          echo "---- compose logs (tail) ----"
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml logs --tail=200 || true
+
           exit 1
+
 
       - name: Cleanup DEV
         if: always()
