@@ -56,24 +56,42 @@ jobs:
       - name: Build images (DEV compose)
         run: docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 
-      - name: Install Trivy
-  	uses: aquasecurity/trivy-action@0.20.0
-
-
-      - name: Show built images (debug)
-        run: docker images
-
       - name: Trivy scan - gateway
-        run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-gateway
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: surfpulse-gateway:latest
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
 
       - name: Trivy scan - surf-data-service
-        run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-surf-data-service
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: surfpulse-surf-data-service:latest
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
 
       - name: Trivy scan - notification-service
-        run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-notification-service
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: surfpulse-notification-service:latest
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
 
       - name: Trivy scan - scheduler-service
-        run: trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 surfpulse-scheduler-service
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: surfpulse-scheduler-service:latest
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+
 
 
   deploy-dev:
