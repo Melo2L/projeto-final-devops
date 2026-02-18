@@ -1,12 +1,12 @@
 services:
   gateway:
-    image: ${REGISTRY}-gateway:${APP_TAG}
+    image: ${REGISTRY}/surfpulse-gateway:${APP_TAG}
 
   surf-data-service:
-    image: ${REGISTRY}-surf-data-service:${APP_TAG}
+    image: ${REGISTRY}/surfpulse-surf-data-service:${APP_TAG}
 
   notification-service:
-    image: ${REGISTRY}-notification-service:${APP_TAG}
+    image: ${REGISTRY}/surfpulse-notification-service:${APP_TAG}
 
   scheduler-service:
-    image: ${REGISTRY}-scheduler-service:${APP_TAG}
+    image: ${REGISTRY}/surfpulse-scheduler-service:${APP_TAG}
