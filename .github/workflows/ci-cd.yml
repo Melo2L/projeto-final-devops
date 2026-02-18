@@ -231,13 +231,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy PRD
-  run: |
-    set -e
-    export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
-    export ENABLE_OTEL="${ENABLE_OTEL}"
-    echo "APP_TAG=${GITHUB_SHA}" > .env
-    echo "REGISTRY=surfpulse" >> .env
-    docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
+        run: |
+          set -e
+          export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
+          export ENABLE_OTEL="${ENABLE_OTEL}"
+          echo "APP_TAG=${GITHUB_SHA}" > .env
+          echo "REGISTRY=surfpulse" >> .env
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
 
       - name: Smoke test PRD
         run: |
