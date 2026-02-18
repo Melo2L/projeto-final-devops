@@ -1,14 +1,15 @@
 services:
   gateway:
-    environment:
-      - ENVIRONMENT=PRD
+    image: ${REGISTRY}-gateway:${APP_TAG}
+
   surf-data-service:
-    environment:
-      - ENVIRONMENT=PRD
+    image: ${REGISTRY}-surf-data-service:${APP_TAG}
+
   notification-service:
-    environment:
-      - ENVIRONMENT=PRD
+    image: ${REGISTRY}-notification-service:${APP_TAG}
+
   scheduler-service:
-    environment:
-      - ENVIRONMENT=PRD
-      - SCHEDULE_SECONDS=86400
+    image: ${REGISTRY}-scheduler-service:${APP_TAG}
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57

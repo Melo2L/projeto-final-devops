@@ -1,14 +1,15 @@
 services:
   gateway:
-    environment:
-      - ENVIRONMENT=STG
+    image: ${REGISTRY}-gateway:${APP_TAG}
+
   surf-data-service:
-    environment:
-      - ENVIRONMENT=STG
+    image: ${REGISTRY}-surf-data-service:${APP_TAG}
+
   notification-service:
-    environment:
-      - ENVIRONMENT=STG
+    image: ${REGISTRY}-notification-service:${APP_TAG}
+
   scheduler-service:
-    environment:
-      - ENVIRONMENT=STG
-      - SCHEDULE_SECONDS=300
+    image: ${REGISTRY}-scheduler-service:${APP_TAG}
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
