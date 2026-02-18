@@ -8,3 +8,4 @@ venv/
 .env
 .DS_Store
 Testes_de_Vulnerabilidade/
+*.bak
