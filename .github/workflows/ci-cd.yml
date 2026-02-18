@@ -129,13 +129,14 @@ jobs:
             -f docker-compose.yml \
             -f docker-compose.dev.yml \
             -f docker-compose.ci.yml \
-            pull
+            build
 
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.dev.yml \
             -f docker-compose.ci.yml \
-            up -d --no-build
+            up -d
+
 
 
       - run: |
