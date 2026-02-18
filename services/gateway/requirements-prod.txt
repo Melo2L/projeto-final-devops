@@ -1,0 +1,5 @@
+flask==3.0.3
+requests==2.32.4
+gunicorn==22.0.0
+setuptools>=78.1.1
+

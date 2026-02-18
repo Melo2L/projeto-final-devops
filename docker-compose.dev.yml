@@ -1,14 +1,23 @@
 services:
   gateway:
     environment:
-      - ENVIRONMENT=DEV
+      - ENABLE_OTEL=true
+    volumes:
+      - ./services/gateway/requirements-dev.txt:/app/requirements-dev.txt
+    command: >
+      sh -c "pip install -r requirements-dev.txt &&
+             gunicorn -w 2 -b 0.0.0.0:5000 app.main:app"
+
   surf-data-service:
-    environment:
-      - ENVIRONMENT=DEV
+    ports:
+      - "5001:5001"
+
   notification-service:
-    environment:
-      - ENVIRONMENT=DEV
-  scheduler-service:
-    environment:
-      - ENVIRONMENT=DEV
-      - SCHEDULE_SECONDS=60
+    ports:
+      - "5002:5002"
+
+  jaeger:
+    ports:
+      - "16686:16686"  # UI Jaeger
+      - "4318:4318"    # OTLP traces
+
