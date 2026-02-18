@@ -7,26 +7,35 @@ app = Flask(__name__)
 ENABLE_OTEL = os.getenv("ENABLE_OTEL", "false").lower() == "true"
 
 if ENABLE_OTEL:
-    from opentelemetry import trace
-    from opentelemetry.sdk.resources import Resource
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-    from opentelemetry.instrumentation.flask import FlaskInstrumentor
-    from opentelemetry.instrumentation.requests import RequestsInstrumentor
-    resource = Resource.create({"service.name": "gateway"})
-    provider = TracerProvider(resource=resource)
-    trace.set_tracer_provider(provider)
+    try:
+        from opentelemetry import trace
+        from opentelemetry.sdk.resources import Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.flask import FlaskInstrumentor
+        from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-    jaeger_exporter = JaegerExporter(
-        agent_host_name="jaeger",
-        agent_port=6831,
-    )
+        resource = Resource.create({"service.name": "gateway"})
+        provider = TracerProvider(resource=resource)
+        trace.set_tracer_provider(provider)
 
-    provider.add_span_processor(BatchSpanProcessor(jaeger_exporter))
+        # Exportador OTLP → Jaeger container
+        otlp_exporter = OTLPSpanExporter(
+            endpoint="http://jaeger:4317",
+            insecure=True
+        )
 
-    FlaskInstrumentor().instrument_app(app)
-    RequestsInstrumentor().instrument()
+        provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+
+        FlaskInstrumentor().instrument_app(app)
+        RequestsInstrumentor().instrument()
+
+        print("[OTEL] enabled with OTLP exporter → jaeger:4317")
+
+    except Exception as e:
+        print(f"[OTEL] failed to initialize: {e}")
+
 
 
 ENV = os.getenv("ENVIRONMENT", "DEV")
