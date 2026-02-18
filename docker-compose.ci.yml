@@ -1,0 +1,12 @@
+services:
+  gateway:
+    image: surfpulse-gateway:${APP_TAG}
+
+  surf-data-service:
+    image: surfpulse-surf-data-service:${APP_TAG}
+
+  notification-service:
+    image: surfpulse-notification-service:${APP_TAG}
+
+  scheduler-service:
+    image: surfpulse-scheduler-service:${APP_TAG}
