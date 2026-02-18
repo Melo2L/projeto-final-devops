@@ -8,6 +8,7 @@ opentelemetry-sdk==1.27.0
 opentelemetry-exporter-otlp==1.27.0
 opentelemetry-instrumentation-flask==0.48b0
 opentelemetry-instrumentation-requests==0.48b0
+opentelemetry-exporter-jaeger-thrift==1.21.0
 
 protobuf==4.25.3
 
