@@ -134,11 +134,12 @@ jobs:
       - name: Deploy DEV
         run: |
           set -e
-          echo "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME"
-          echo "ENABLE_OTEL=$ENABLE_OTEL"
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
+          echo "APP_TAG=${{ github.sha }}" > .env
+          echo "REGISTRY=surfpulse" >> .env
           docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
+
 
       - name: Smoke test DEV
         run: |
@@ -188,10 +189,11 @@ jobs:
           set -e
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
+
+          # PASSAR TAG DA IMAGE (SHA DO COMMIT)
           echo "APP_TAG=${{ github.sha }}" > .env
           echo "REGISTRY=surfpulse" >> .env
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --no-build
-
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
 
       - name: Smoke test STG
         run: |
@@ -235,9 +237,12 @@ jobs:
           set -e
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
+
+          # PASSAR TAG DA IMAGE (SHA DO COMMIT)
           echo "APP_TAG=${{ github.sha }}" > .env
           echo "REGISTRY=surfpulse" >> .env
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
+
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
 
       - name: Smoke test PRD
         run: |
