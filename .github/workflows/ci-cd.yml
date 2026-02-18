@@ -47,10 +47,7 @@ jobs:
         run: |
           set -e
           pip install pip-audit
-          pip-audit -r requirements.txt \
-            -f json \
-            -o pip-audit-report.json \
-            --progress-spinner off || true
+          pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 -f json -o pip-audit-report.json --progress-spinner off
 
 
       - name: Upload pip-audit report
@@ -76,11 +73,18 @@ jobs:
           set -e
           docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 
+      - name: Tag images with SHA
+        run: |
+          docker tag surfpulse-gateway:${GITHUB_SHA} surfpulse-gateway:
+          docker tag surfpulse-surf-data-service:${GITHUB_SHA} surfpulse-surf-data-service:
+          docker tag surfpulse-notification-service:${GITHUB_SHA} surfpulse-notification-service:
+          docker tag surfpulse-scheduler-service:${GITHUB_SHA} surfpulse-scheduler-service:
+
       # Trivy via action (SEM apt-get, evita "Unable to locate package trivy")
       - name: Trivy scan - gateway
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-gateway:latest
+          image-ref: surfpulse-gateway:${GITHUB_SHA}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -89,7 +93,7 @@ jobs:
       - name: Trivy scan - surf-data-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-surf-data-service:latest
+          image-ref: surfpulse-surf-data-service:${GITHUB_SHA}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -98,7 +102,7 @@ jobs:
       - name: Trivy scan - notification-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-notification-service:latest
+          image-ref: surfpulse-notification-service:${GITHUB_SHA}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -107,7 +111,7 @@ jobs:
       - name: Trivy scan - scheduler-service
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: surfpulse-scheduler-service:latest
+          image-ref: surfpulse-scheduler-service:${GITHUB_SHA}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
@@ -134,7 +138,7 @@ jobs:
           echo "ENABLE_OTEL=$ENABLE_OTEL"
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
-          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --no-build
 
       - name: Smoke test DEV
         run: |
@@ -184,7 +188,9 @@ jobs:
           set -e
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
-          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --build
+      echo "APP_TAG=" > .env
+      echo "REGISTRY=surfpulse" >> .env
+          docker compose -f docker-compose.yml -f docker-compose.stg.yml up -d --no-build
 
       - name: Smoke test STG
         run: |
@@ -226,9 +232,11 @@ jobs:
       - name: Deploy PRD
         run: |
           set -e
+      echo "APP_TAG=" > .env
+      echo "REGISTRY=surfpulse" >> .env
           export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME}"
           export ENABLE_OTEL="${ENABLE_OTEL}"
-          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --build
+          docker compose -f docker-compose.yml -f docker-compose.prd.yml up -d --no-build
 
       - name: Smoke test PRD
         run: |
