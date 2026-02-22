@@ -1,23 +1,39 @@
 services:
   gateway:
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile.dev
     environment:
       - ENABLE_OTEL=true
     volumes:
-      - ./services/gateway/requirements-dev.txt:/app/requirements-dev.txt
-    command: >
-      sh -c "pip install -r requirements-dev.txt &&
-             gunicorn -w 2 -b 0.0.0.0:5000 app.main:app"
+      - ./services/gateway/app:/app/app
 
   surf-data-service:
+    build:
+      context: ./services/surf-data-service
+      dockerfile: Dockerfile.dev
     ports:
       - "5001:5001"
+    volumes:
+      - ./services/surf-data-service/app:/app/app
 
   notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile.dev
     ports:
       - "5002:5002"
+    volumes:
+      - ./services/notification-service/app:/app/app
+
+  scheduler-service:
+    build:
+      context: ./services/scheduler-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/scheduler-service/app:/app/app
 
   jaeger:
     ports:
       - "16686:16686"  # UI Jaeger
-      - "4318:4318"    # OTLP traces
-
+      - "4318:4318"    # OTLP traces (HTTP)
