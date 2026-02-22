@@ -14,3 +14,4 @@ Testes_de_Vulnerabilidade/
 *.bak
 Prints/
 Prints/
+services/gateway/Dockerfile.dev
