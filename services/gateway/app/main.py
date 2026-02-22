@@ -134,33 +134,6 @@ def send_daily():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)  # nosec B104
 
-@app.get("/ui")
-def home():
-    return """
-    <html>
-        <head>
-            <title>SurfPulse</title>
-        </head>
-        <body style="font-family:Arial;margin:40px">
-            <h1>SurfPulse Platform</h1>
-            <p>Status API:</p>
-            <ul>
-                <li><a href="/health">/health</a></li>
-                <li><a href="/api/report?spot=carcavelos">Exemplo Report</a></li>
-            </ul>
-            <form action="/api/report">
-                <label>Spot:</label>
-                <select name="spot">
-                    <option value="carcavelos">Carcavelos</option>
-                    <option value="guincho">Guincho</option>
-                    <option value="caparica">Caparica</option>
-                </select>
-                <button type="submit">Gerar Report</button>
-            </form>
-        </body>
-    </html>
-    """
-
 # --- Frontend (React build) served by Flask ---
 @app.get("/")
 def serve_frontend():
@@ -178,3 +151,6 @@ def spa_fallback(path):
         return send_from_directory("static", path)
     except Exception:
         return send_from_directory("static", "index.html")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)  # nosec B104
