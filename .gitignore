@@ -9,9 +9,9 @@ venv/
 .DS_Store
 Testes_de_Vulnerabilidade/
 *.bak
-
 # backups
 *.bak
 Prints/
 Prints/
 services/gateway/Dockerfile.dev
+!.trivyignore
