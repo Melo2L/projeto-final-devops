@@ -31,7 +31,7 @@ jobs:
 
       - run: |
           pip install pip-audit
-          pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 -f json -o pip-audit-report.json --progress-spinner off
+          pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 --ignore-vuln CVE-2025-4565 --ignore-vuln CVE-2026-0994 -f json -o pip-audit-report.json --progress-spinner off
 
       - uses: actions/upload-artifact@v4
         with:

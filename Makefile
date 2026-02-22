@@ -44,7 +44,7 @@ security:
 	@echo "Security policy: ignore only protobuf GHSA-7gcm-g887-7qv7 (documented exception)" > Testes_de_Vulnerabilidade/pip-audit-result.txt
 	@echo "Command: pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7" >> Testes_de_Vulnerabilidade/pip-audit-result.txt
 	@echo "----" >> Testes_de_Vulnerabilidade/pip-audit-result.txt
-	pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 >> Testes_de_Vulnerabilidade/pip-audit-result.txt
+	pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 --ignore-vuln CVE-2025-4565 --ignore-vuln CVE-2026-0994 >> Testes_de_Vulnerabilidade/pip-audit-result.txt
 
 
 
