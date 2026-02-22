@@ -12,3 +12,6 @@ Testes_de_Vulnerabilidade/
 
 # backups
 *.bak
+Prints/
+Prints/
+services/gateway/Dockerfile.dev
