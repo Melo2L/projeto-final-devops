@@ -1,13 +1,8 @@
-FROM python:3.11.7-slim-bookworm
+FROM python:3.11-alpine3.22@sha256:3f631db1a2b958674f293189d93e2fd697420172f8850514dd28176c8b86a45a
 
-# Reproducibility:
-# - Pin base image tag (avoid floating '3.11-slim-bookworm')
-# - Avoid 'apt-get upgrade/full-upgrade' inside the image; update by rebuilding with a newer base image
-
-USER root
-RUN apt-get update \
- && apt-get install -y --no-install-recommends ca-certificates \
- && rm -rf /var/lib/apt/lists/*
+RUN apk update && apk upgrade --no-cache \
+ && apk add --no-cache ca-certificates \
+ && update-ca-certificates
 
 RUN addgroup --system app && adduser --system --ingroup app --home /home/app app
 ENV HOME=/home/app

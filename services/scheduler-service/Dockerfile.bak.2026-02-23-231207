@@ -25,4 +25,3 @@ COPY app ./app
 USER app
 
 CMD ["python", "app/main.py"]
-
