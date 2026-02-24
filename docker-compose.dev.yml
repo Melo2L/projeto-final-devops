@@ -5,35 +5,14 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       - ENABLE_OTEL=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
     volumes:
       - ./services/gateway/app:/app/app
-
-  surf-data-service:
-    build:
-      context: ./services/surf-data-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "5001:5001"
-    volumes:
-      - ./services/surf-data-service/app:/app/app
-
-  notification-service:
-    build:
-      context: ./services/notification-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "5002:5002"
-    volumes:
-      - ./services/notification-service/app:/app/app
-
-  scheduler-service:
-    build:
-      context: ./services/scheduler-service
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./services/scheduler-service/app:/app/app
+    depends_on:
+      - jaeger
 
   jaeger:
+    image: jaegertracing/all-in-one:1.57
     ports:
-      - "16686:16686"  # UI Jaeger
-      - "4318:4318"    # OTLP traces (HTTP)
+      - "16686:16686"
+      - "4318:4318"

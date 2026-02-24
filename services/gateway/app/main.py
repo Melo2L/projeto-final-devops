@@ -83,7 +83,9 @@ def api_report():
         "report": r.json()
     })
 
-INTERNAL_TOKEN = os.getenv("INTERNAL_TOKEN", "dev-token")
+INTERNAL_TOKEN = os.getenv("INTERNAL_TOKEN")
+if not INTERNAL_TOKEN:
+    raise RuntimeError("INTERNAL_TOKEN is required")
 NOTIFY_URL = os.getenv("NOTIFY_URL", "http://notification-service:5002")
 
 SUBSCRIBERS = [
@@ -151,6 +153,3 @@ def spa_fallback(path):
         return send_from_directory("static", path)
     except Exception:
         return send_from_directory("static", "index.html")
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)  # nosec B104

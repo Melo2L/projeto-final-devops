@@ -1,0 +1,28 @@
+FROM python:3.11-slim-bookworm@sha256:04cd27899595a99dfe77709d96f08876bf2ee99139ee2f0fe9ac948005034e5b
+USER root
+RUN python -m pip install --upgrade pip "setuptools>=78.1.1" "wheel>=0.46.2"
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates \
+ && apt-get -y upgrade \
+ && apt-get -y full-upgrade \
+ && rm -rf /var/lib/apt/lists/*
+RUN addgroup --system app && adduser --system --ingroup app --home /home/app app
+ENV HOME=/home/app
+ENV PATH="/home/app/.local/bin:$PATH"
+
+
+WORKDIR /app
+
+RUN python -m pip install --upgrade pip "setuptools>=78.1.1" "wheel>=0.46.2"
+
+
+ARG REQUIREMENTS_FILE=requirements.txt
+COPY ${REQUIREMENTS_FILE} /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+COPY app ./app
+
+USER app
+
+CMD ["python", "app/main.py"]
+

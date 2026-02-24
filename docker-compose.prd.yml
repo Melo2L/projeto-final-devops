@@ -1,15 +1,27 @@
 services:
   gateway:
     image: ${REGISTRY}/surfpulse-gateway:${APP_TAG}
+    environment:
+      - ENVIRONMENT=PRD
+      - ENABLE_OTEL=false
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - SURF_DATA_URL=http://surf-data-service:5001
+      - NOTIFY_URL=http://notification-service:5002
 
   surf-data-service:
     image: ${REGISTRY}/surfpulse-surf-data-service:${APP_TAG}
+    environment:
+      - ENVIRONMENT=PRD
 
   notification-service:
     image: ${REGISTRY}/surfpulse-notification-service:${APP_TAG}
+    environment:
+      - ENVIRONMENT=PRD
 
   scheduler-service:
     image: ${REGISTRY}/surfpulse-scheduler-service:${APP_TAG}
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.57
+    environment:
+      - ENVIRONMENT=PRD
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - GATEWAY_URL=http://gateway:5000
+      - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}

@@ -1,6 +1,7 @@
 services:
   surf-data-service:
     build: ./services/surf-data-service
+    image: local/surf-data-service:test
     expose:
       - "5001"
     environment:
@@ -8,18 +9,15 @@ services:
 
   notification-service:
     build: ./services/notification-service
+    image: local/notification-service:test
     expose:
       - "5002"
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
 
-  jaeger:
-    image: jaegertracing/all-in-one:1.57
-    expose:
-      - "4318"
-
   gateway:
     build: ./services/gateway
+    image: local/gateway:test
     ports:
       - "5000:5000"
     environment:
@@ -31,10 +29,10 @@ services:
     depends_on:
       - surf-data-service
       - notification-service
-      - jaeger
 
   scheduler-service:
     build: ./services/scheduler-service
+    image: local/scheduler-service:test
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN:-dev-token}
