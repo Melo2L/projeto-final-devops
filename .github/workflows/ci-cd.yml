@@ -82,6 +82,9 @@ jobs:
           echo "ENVIRONMENT=CI" >> .env
           echo "INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}" >> .env
 
+      - name: Clean Docker cache
+        run: docker builder prune -af || true
+
       - name: Build images (PROD only)
         run: |
           set -e
