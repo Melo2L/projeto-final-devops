@@ -2,7 +2,7 @@
 
 **Alisson Melo**
 
-**Repositório GitHub:** https://github.com/Melo2L/projeto-final-devops (Público)
+**Repositório GitHub:** https://github.com/Melo2L/projeto-final-devops (Privado)
 
 ------------------------------------------------------------------------
 
