@@ -25,6 +25,3 @@ services:
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
       - GATEWAY_URL=http://gateway:5000
       - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.57
