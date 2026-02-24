@@ -30,9 +30,6 @@ logs:
 clean:
 	docker compose down -v --rmi all --remove-orphans
 
-# ==============================
-# SECURITY SCANS
-# ==============================
 security:
 	@echo "=== A CRIAR PASTA DE RELATÓRIOS ==="
 	mkdir -p Testes_de_Vulnerabilidade
@@ -41,25 +38,14 @@ security:
 	bandit -r services -ll -f txt -o Testes_de_Vulnerabilidade/bandit-result.txt
 
 	@echo "=== PIP AUDIT (DEPENDENCIES) ==="
-	@echo "Security policy: ignore only protobuf GHSA-7gcm-g887-7qv7 (documented exception)" > Testes_de_Vulnerabilidade/pip-audit-result.txt
-	@echo "Command: pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7" >> Testes_de_Vulnerabilidade/pip-audit-result.txt
-	@echo "----" >> Testes_de_Vulnerabilidade/pip-audit-result.txt
-	pip-audit -r requirements.txt --ignore-vuln GHSA-7gcm-g887-7qv7 --ignore-vuln CVE-2025-4565 --ignore-vuln CVE-2026-0994 >> Testes_de_Vulnerabilidade/pip-audit-result.txt
-
-
+	pip-audit -r requirements.txt -f json -o Testes_de_Vulnerabilidade/pip-audit-report.json
+	pip-audit -r requirements.txt > Testes_de_Vulnerabilidade/pip-audit-result.txt
 
 	@echo "=== TRIVY IMAGE SCAN ==="
-	trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 projeto_final_devops_alisson_melo-gateway \
-	| tee Testes_de_Vulnerabilidade/trivy-gateway.txt
-
-	trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 projeto_final_devops_alisson_melo-surf-data-service \
-	| tee Testes_de_Vulnerabilidade/trivy-surf-data.txt
-
-	trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 projeto_final_devops_alisson_melo-notification-service \
-	| tee Testes_de_Vulnerabilidade/trivy-notification.txt
-
-	trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 projeto_final_devops_alisson_melo-scheduler-service \
-	| tee Testes_de_Vulnerabilidade/trivy-scheduler.txt
+	trivy image --severity HIGH,CRITICAL --exit-code 1 local/gateway:test | tee Testes_de_Vulnerabilidade/trivy-gateway.txt
+	trivy image --severity HIGH,CRITICAL --exit-code 1 local/surf-data-service:test | tee Testes_de_Vulnerabilidade/trivy-surf-data.txt
+	trivy image --severity HIGH,CRITICAL --exit-code 1 local/notification-service:test | tee Testes_de_Vulnerabilidade/trivy-notification.txt
+	trivy image --severity HIGH,CRITICAL --exit-code 1 local/scheduler-service:test | tee Testes_de_Vulnerabilidade/trivy-scheduler.txt
 
 	@echo "=== SCANS FINALIZADOS ==="
 

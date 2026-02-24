@@ -19,13 +19,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install dependencies (PROD set)
         run: |
           set -e
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-prod.txt
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
+      - name: Dependency vulnerability scan (pip-audit) - PROD
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements-prod.txt -f json -o pip-audit-report.json
       - name: Run tests
         run: |
           set -e
@@ -165,6 +169,8 @@ jobs:
           echo "APP_TAG=${{ github.sha }}" > .env
           echo "REGISTRY=${{ secrets.DOCKER_USERNAME }}" >> .env
           echo "COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}" >> .env
+          echo "ENVIRONMENT=DEV" >> .env
+          echo "INTERNAL_TOKEN=${{ secrets.INTERNAL_TOKEN }}" >> .env
 
           docker compose \
             -f docker-compose.yml \
