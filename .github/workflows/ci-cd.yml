@@ -99,7 +99,6 @@ jobs:
           exit-code: "1"
           ignore-unfixed: false
           scanners: vuln
-          pkg-types: os,library
 
       - name: Trivy scan - surf-data
         uses: aquasecurity/trivy-action@0.20.0
@@ -110,7 +109,6 @@ jobs:
           exit-code: "1"
           ignore-unfixed: false
           scanners: vuln
-          pkg-types: os,library
 
       - name: Trivy scan - notification
         uses: aquasecurity/trivy-action@0.20.0
@@ -121,7 +119,6 @@ jobs:
           exit-code: "1"
           ignore-unfixed: false
           scanners: vuln
-          pkg-types: os,library
 
       - name: Trivy scan - scheduler
         uses: aquasecurity/trivy-action@0.20.0
@@ -132,7 +129,6 @@ jobs:
           exit-code: "1"
           ignore-unfixed: false
           scanners: vuln
-          pkg-types: os,library
 
       - name: Tag images for Docker Hub
         run: |
