@@ -203,12 +203,18 @@ jobs:
 
 
 
-      - run: |
+      - name: Smoke test (Nginx)
+        run: |
           set -e
           for i in {1..30}; do
-            if curl -fsS http://localhost:5000/health > /dev/null; then exit 0; fi
+            if curl -fsS http://localhost/ > /dev/null; then
+              echo "Application reachable via Nginx"
+              exit 0
+            fi
             sleep 2
           done
+          echo "Application did not become ready"
+          docker compose logs --no-color
           exit 1
 
       - if: always()
