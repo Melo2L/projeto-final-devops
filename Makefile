@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 .PHONY: help build up down logs clean security
 
 PYTHON := python3
@@ -42,30 +44,33 @@ clean:
 	docker compose down -v --rmi all --remove-orphans
 	
 security:
-	@echo "=== PREPARANDO AMBIENTE ==="
-	@if [ ! -d "$(VENV)" ]; then \
-		$(PYTHON) -m venv $(VENV); \
-	fi
-	@$(PIP) install --upgrade pip >/dev/null
-	@$(PIP) install bandit pip-audit >/dev/null
-
-	@echo "=== A CRIAR PASTA DE RELATÓRIOS ==="
-	@mkdir -p Testes_de_Vulnerabilidade
-
-	@echo "=== BANDIT (CODE SECURITY) ==="
-	@$(PY) -m bandit -r services -ll -f txt -o Testes_de_Vulnerabilidade/bandit-result.txt
-
-	@echo "=== PIP AUDIT (DEPENDENCIES) ==="
-	@$(PY) -m pip_audit -r requirements.txt -f json -o Testes_de_Vulnerabilidade/pip-audit-report.json
-	@$(PY) -m pip_audit -r requirements.txt > Testes_de_Vulnerabilidade/pip-audit-result.txt
-	
-	@echo "=== SCANS PIP FINALIZADOS ==="
-
-	@echo "=== TRIVY IMAGE SCAN ==="
-	trivy image --severity HIGH,CRITICAL --exit-code 1 local/webapp:test | tee Testes_de_Vulnerabilidade/trivy-webapp.txt
-	trivy image --severity HIGH,CRITICAL --exit-code 1 local/surf-data-service:test | tee Testes_de_Vulnerabilidade/trivy-surf-data.txt
-	trivy image --severity HIGH,CRITICAL --exit-code 1 local/notification-service:test | tee Testes_de_Vulnerabilidade/trivy-notification.txt
-	trivy image --severity HIGH,CRITICAL --exit-code 1 local/scheduler-service:test | tee Testes_de_Vulnerabilidade/trivy-scheduler.txt
+	@set -euo pipefail; \
+	 echo "=== PREPARANDO AMBIENTE ==="; \
+	 if [ ! -d "$(VENV)" ]; then $(PYTHON) -m venv $(VENV); fi; \
+	 source "$(VENV)/bin/activate"; \
+	 python -m pip install --upgrade pip >/dev/null; \
+	 # Ferramentas (instaladas dentro do venv) \
+	 pip install -q bandit pip-audit; \
+	 # Trivy: se estiver instalado via pip no venv, este activate garante que o bin fica no PATH \
+	 mkdir -p Testes_de_Vulnerabilidade/pip-audit; \
+	 echo "=== PIP-AUDIT (DEPENDENCIES) ==="; \
+	 mkdir -p Testes_de_Vulnerabilidade/pip-audit; \
+	 REQ_FILES=$$(find . -type f -name "requirements*.txt" | sort); \
+	 if [ -z "$$REQ_FILES" ]; then \
+	   echo "Nenhum requirements encontrado."; \
+	 else \
+	   for f in $$REQ_FILES; do \
+	     safe_name=$$(echo "$$f" | sed 's#^\./##' | tr '/.' '__'); \
+	     echo "Auditando: $$f"; \
+	     pip-audit -r "$$f" -f json -o "Testes_de_Vulnerabilidade/pip-audit/$${safe_name}.json"; \
+	   done; \
+	 fi;
+	 @echo "=== TRIVY IMAGE SCAN ==="; \
+	 trivy image --severity HIGH,CRITICAL --exit-code 1 local/webapp:test | tee Testes_de_Vulnerabilidade/trivy-webapp.txt; \
+	 trivy image --severity HIGH,CRITICAL --exit-code 1 local/surf-data-service:test | tee Testes_de_Vulnerabilidade/trivy-surf-data.txt; \
+	 trivy image --severity HIGH,CRITICAL --exit-code 1 local/notification-service:test | tee Testes_de_Vulnerabilidade/trivy-notification.txt; \
+	 trivy image --severity HIGH,CRITICAL --exit-code 1 local/scheduler-service:test | tee Testes_de_Vulnerabilidade/trivy-scheduler.txt; \
+	 @echo "=== SCANS FINALIZADOS ==="
 
 	@echo "=== SCANS FINALIZADOS ==="
 

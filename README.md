@@ -304,6 +304,8 @@ Após subir os containers:
 * HTTPS → https://localhost
   *(certificado self-signed do Nginx)*
 
+Webapp roda internamente na porta 5000.
+
 ------------------------------------------------------------------------
 
 ## 📝 Observações
@@ -318,15 +320,15 @@ Após subir os containers:
 
 Exemplo:
 
-curl http://localhost:5000/report
+curl -k http://localhost/report
 
 Fluxo executado:
 
-1. webapp recebe requisição
-2. surf-data-service consulta Open-Meteo
-3. dados retornam ao webapp
+1. Webapp recebe requisição via Nginx
+2. surf-data-service consulta Open-Meteo API
+3. Dados retornam ao webapp
 4. notification-service gera relatório
-5. resposta enviada ao utilizador
+5. Resposta enviada ao utilizador
 
 ------------------------------------------------------------------------
 
