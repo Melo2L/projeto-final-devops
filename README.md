@@ -46,7 +46,7 @@ CI/CD automatizado e monitorização.
 
 
 <p align="center">
-  <img src="20260224-HLD-ProjetoFinal-DevOps.drawio.png" width="1000"/>
+  <img src="/20260225-HLD-ProjetoFinal-DevOps.drawio.png" width="1000"/>
 </p>
 
 O meu HLD apresenta a arquitetura geral da plataforma SurfPulse baseada em microsserviços conteinerizados, evidenciando a separação entre gateway, serviços internos de dados, notificações e agendamento. O acesso do utilizador ocorre através de um ponto de entrada público (Load Balancer), que encaminha requisições para o gateway-service, responsável pela orquestração das chamadas internas e integração com a API externa Open-Meteo. 
