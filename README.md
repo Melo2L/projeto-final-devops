@@ -153,22 +153,143 @@ A atualização ocorre através de pull da nova imagem e recriação dos contain
 
 ------------------------------------------------------------------------
 
-## Como Usar a Aplicação
+##  Pré-requisitos do Ambiente
 
-Execução Local (DEV)
+Antes de executar o projeto, certifique-se de que possui:
 
-Clone o repositório:
+* **Sistema Operacional:** Linux, macOS ou Windows (WSL recomendado)
+* **Docker:** >= 24.x
+* **Docker Compose:** >= v2.x (`docker compose`)
+* **Python:** **3.10+** (recomendado **Python 3.11**)
+* **Git** instalado
 
-git clone https://github.com/Melo2L/projeto-final-devops
-cd projeto-final-devops
+Verifique versões:
 
-Execute:
+```bash
+docker --version
+docker compose version
+python3 --version
+git --version
+```
 
-docker compose up -d --build
+------------------------------------------------------------------------
 
-A aplicação ficará disponível em:
+## Configuração do Ambiente Python (do zero)
 
-https://localhost
+Caso esteja a configurar o ambiente pela primeira vez:
+
+Criar ambiente virtual:
+
+```bash
+python3 -m venv .venv
+```
+
+Ativar ambiente virtual:
+
+Linux / macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+Windows (PowerShell):
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Instalar dependências de desenvolvimento:
+
+```bash
+pip install --upgrade pip
+pip install -r requirements-dev.txt
+```
+
+Isso instalará ferramentas usadas no projeto, incluindo:
+
+* **Bandit** → análise de segurança do código
+* **pip-audit** → verificação de vulnerabilidades em dependências
+* Ferramentas de teste e qualidade
+
+------------------------------------------------------------------------
+
+## Análise de Segurança (Makefile)
+
+Para executar verificações de segurança:
+
+```bash
+make security
+```
+
+Isso executa:
+
+* `bandit` → análise estática do código Python
+* `pip-audit` → auditoria das dependências (todos os requirements)
+
+Os relatórios serão gerados em:
+
+```
+Testes_de_Vulnerabilidade/
+```
+
+------------------------------------------------------------------------
+
+## Execução com Docker
+
+Ambiente padrão:
+
+```bash
+make up
+```
+
+Ambiente de desenvolvimento (DEV):
+
+```bash
+make dev
+```
+
+Ambiente de staging:
+
+```bash
+make stg
+```
+
+Isso garante:
+
+* Containers atualizados
+* Nginx ativo nas portas **80 e 443**
+* Configuração consistente entre ambientes
+
+Para parar os containers:
+
+```bash
+make down
+```
+
+Limpeza completa:
+
+```bash
+make clean
+```
+
+------------------------------------------------------------------------
+
+## Acesso à aplicação
+
+Após subir os containers:
+
+* HTTP → http://localhost
+* HTTPS → https://localhost
+  *(certificado self-signed do Nginx)*
+
+------------------------------------------------------------------------
+
+## 📝 Observações
+
+* O Nginx é utilizado como **reverse proxy padrão** em todos os ambientes.
+* Certificados SSL locais são apenas para desenvolvimento.
+* O projeto foi testado principalmente em **Linux Ubuntu 22.04+**.
+
 
 ------------------------------------------------------------------------
 ## Endpoint Principal

@@ -18,8 +18,8 @@ services:
   webapp:
     build: ./services/webapp
     image: local/webapp:test
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
       - ENABLE_OTEL=false
@@ -41,3 +41,15 @@ services:
     depends_on:
       - webapp
     
+  
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - webapp
