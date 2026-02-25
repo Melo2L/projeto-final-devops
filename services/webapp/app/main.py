@@ -4,6 +4,16 @@ import requests
 
 app = Flask(__name__)
 
+INTERNAL_TOKEN = os.getenv("INTERNAL_TOKEN")
+
+IS_TEST = (
+    os.getenv("PYTEST_CURRENT_TEST") is not None
+    or os.getenv("ENVIRONMENT") in ("CI", "TEST")
+)
+
+if not INTERNAL_TOKEN and not IS_TEST:
+    raise RuntimeError("INTERNAL_TOKEN is required")
+
 ENABLE_OTEL = os.getenv("ENABLE_OTEL", "false").lower() == "true"
 
 if ENABLE_OTEL:
