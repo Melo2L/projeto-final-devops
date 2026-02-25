@@ -11,6 +11,16 @@ jobs:
   quality-gate:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Debug workspace
+        run: |
+          pwd
+          ls -la
+          ls -la requirements-prod.txt || true
+
       - name: Install dependencies (PROD set)
         run: |
           set -e
