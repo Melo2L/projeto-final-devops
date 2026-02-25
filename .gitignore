@@ -1,4 +1,7 @@
 __pycache__/
+*.log
+*.tmp
+*.swp
 *.pyc
 *.pyo
 *.pyd
@@ -8,13 +11,11 @@ venv/
 .env
 .env.*
 .DS_Store
-Testes_de_Vulnerabilidade/
+
+# Backups / temporários
 *.bak
-# backups
-Prints/
-Prints/
-services/webapp/Dockerfile.dev
-Dockerfile.bak*
-**/Dockerfile.bak*
 *.broken*
 *.old
+
+Testes_de_Vulnerabilidade/
+Prints/
