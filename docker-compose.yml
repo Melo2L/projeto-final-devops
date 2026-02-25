@@ -15,9 +15,9 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
 
-  gateway:
-    build: ./services/gateway
-    image: local/gateway:test
+  webapp:
+    build: ./services/webapp
+    image: local/webapp:test
     ports:
       - "5000:5000"
     environment:
@@ -36,8 +36,8 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-DEV}
       - INTERNAL_TOKEN=${INTERNAL_TOKEN:-dev-token}
-      - GATEWAY_URL=http://gateway:5000
+      - GATEWAY_URL=http://webapp:5000
       - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}
     depends_on:
-      - gateway
+      - webapp
     

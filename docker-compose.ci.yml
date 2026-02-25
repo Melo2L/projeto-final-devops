@@ -1,6 +1,6 @@
 services:
-  gateway:
-    image: ${REGISTRY}/surfpulse-gateway:${APP_TAG}
+  webapp:
+    image: ${REGISTRY}/surfpulse-webapp:${APP_TAG}
 
   surf-data-service:
     image: ${REGISTRY}/surfpulse-surf-data-service:${APP_TAG}

@@ -16,7 +16,7 @@ if ENABLE_OTEL:
         from opentelemetry.instrumentation.flask import FlaskInstrumentor
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-        resource = Resource.create({"service.name": "gateway"})
+        resource = Resource.create({"service.name": "webapp"})
         provider = TracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
 
@@ -69,7 +69,7 @@ def ui_home():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "healthy", "service": "gateway", "env": ENV})
+    return jsonify({"status": "healthy", "service": "webapp", "env": ENV})
 
 @app.get("/api/report")
 def api_report():
@@ -77,7 +77,7 @@ def api_report():
 
     r = requests.get(f"{SURF_DATA_URL}/forecast", params={"spot": spot}, timeout=15)
     return jsonify({
-        "service": "gateway",
+        "service": "webapp",
         "env": ENV,
         "spot": spot,
         "report": r.json()

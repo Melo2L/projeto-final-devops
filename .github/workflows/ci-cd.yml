@@ -90,10 +90,10 @@ jobs:
           set -e
           docker compose -f docker-compose.yml build --no-cache
 
-      - name: Trivy scan - gateway
+      - name: Trivy scan - webapp
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: local/gateway:test
+          image-ref: local/webapp:test
           format: table
           severity: HIGH,CRITICAL
           exit-code: "1"
@@ -133,7 +133,7 @@ jobs:
       - name: Tag images for Docker Hub
         run: |
           set -e
-          docker tag local/gateway:test ${{ secrets.DOCKER_USERNAME }}/surfpulse-gateway:${{ github.sha }}
+          docker tag local/webapp:test ${{ secrets.DOCKER_USERNAME }}/surfpulse-webapp:${{ github.sha }}
           docker tag local/surf-data-service:test ${{ secrets.DOCKER_USERNAME }}/surfpulse-surf-data-service:${{ github.sha }}
           docker tag local/notification-service:test ${{ secrets.DOCKER_USERNAME }}/surfpulse-notification-service:${{ github.sha }}
           docker tag local/scheduler-service:test ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}
@@ -141,7 +141,7 @@ jobs:
       - name: Push images to Docker Hub
         run: |
           set -e
-          docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-gateway:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-webapp:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-surf-data-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-notification-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/surfpulse-scheduler-service:${{ github.sha }}

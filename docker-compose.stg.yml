@@ -1,6 +1,6 @@
 services:
-  gateway:
-    image: ${REGISTRY}/surfpulse-gateway:${APP_TAG}
+  webapp:
+    image: ${REGISTRY}/surfpulse-webapp:${APP_TAG}
     environment:
       - ENVIRONMENT=STG
       - ENABLE_OTEL=false
@@ -23,5 +23,5 @@ services:
     environment:
       - ENVIRONMENT=STG
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
-      - GATEWAY_URL=http://gateway:5000
+      - GATEWAY_URL=http://webapp:5000
       - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}

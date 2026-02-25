@@ -1,6 +1,6 @@
 services:
-  gateway:
-    image: ${REGISTRY}/surfpulse-gateway:${APP_TAG}
+  webapp:
+    image: ${REGISTRY}/surfpulse-webapp:${APP_TAG}
     environment:
       - ENVIRONMENT=PRD
       - ENABLE_OTEL=false
@@ -23,5 +23,16 @@ services:
     environment:
       - ENVIRONMENT=PRD
       - INTERNAL_TOKEN=${INTERNAL_TOKEN}
-      - GATEWAY_URL=http://gateway:5000
+      - GATEWAY_URL=http://webapp:5000
       - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - webapp

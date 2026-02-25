@@ -1,13 +1,13 @@
 services:
-  gateway:
+  webapp:
     build:
-      context: ./services/gateway
+      context: ./services/webapp
       dockerfile: Dockerfile.dev
     environment:
       - ENABLE_OTEL=true
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
     volumes:
-      - ./services/gateway/app:/app/app
+      - ./services/webapp/app:/app/app
     depends_on:
       - jaeger
 

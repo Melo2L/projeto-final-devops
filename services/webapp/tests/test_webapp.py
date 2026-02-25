@@ -8,7 +8,7 @@ MAIN_PY = SERVICE_ROOT / "app" / "main.py"
 import os
 os.environ.setdefault('OTEL_DISABLED','1')
 
-spec = importlib.util.spec_from_file_location("gateway_main", MAIN_PY)
+spec = importlib.util.spec_from_file_location("webapp_main", MAIN_PY)
 m = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(m)
@@ -27,7 +27,7 @@ def test_health(client):
     assert r.status_code == 200
     data = r.get_json()
     assert data["status"] == "healthy"
-    assert data["service"] == "gateway"
+    assert data["service"] == "webapp"
 
 def test_api_report_calls_data_service(client, monkeypatch):
     class FakeResp:

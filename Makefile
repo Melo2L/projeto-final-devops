@@ -39,13 +39,15 @@ security:
 
 	@echo "=== PIP AUDIT (DEPENDENCIES) ==="
 	pip-audit -r requirements.txt -f json -o Testes_de_Vulnerabilidade/pip-audit-report.json
-	pip-audit -r requirements.txt > Testes_de_Vulnerabilidade/pip-audit-result.txt
+	pip-audit -r requirements.txt 2>&1 | tee Testes_de_Vulnerabilidade/pip-audit-result.txt >/dev/null
+	pip-audit -r services/webapp/requirements-lock.txt 2>&1 | tee -a Testes_de_Vulnerabilidade/pip-audit-result.txt >/dev/null
 
 	@echo "=== TRIVY IMAGE SCAN ==="
-	trivy image --severity HIGH,CRITICAL --exit-code 1 local/gateway:test | tee Testes_de_Vulnerabilidade/trivy-gateway.txt
+	trivy image --severity HIGH,CRITICAL --exit-code 1 local/webapp:test | tee Testes_de_Vulnerabilidade/trivy-webapp.txt
 	trivy image --severity HIGH,CRITICAL --exit-code 1 local/surf-data-service:test | tee Testes_de_Vulnerabilidade/trivy-surf-data.txt
 	trivy image --severity HIGH,CRITICAL --exit-code 1 local/notification-service:test | tee Testes_de_Vulnerabilidade/trivy-notification.txt
 	trivy image --severity HIGH,CRITICAL --exit-code 1 local/scheduler-service:test | tee Testes_de_Vulnerabilidade/trivy-scheduler.txt
 
 	@echo "=== SCANS FINALIZADOS ==="
+
 
