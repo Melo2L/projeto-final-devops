@@ -11,9 +11,10 @@ venv/
 Testes_de_Vulnerabilidade/
 *.bak
 # backups
-*.bak
 Prints/
 Prints/
 services/webapp/Dockerfile.dev
 Dockerfile.bak*
 **/Dockerfile.bak*
+*.broken*
+*.old
