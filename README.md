@@ -174,63 +174,85 @@ git --version
 
 ------------------------------------------------------------------------
 
-## Configuração do Ambiente Python (do zero)
+## Configuração Manual do Ambiente Python (Opcional)
 
-Caso esteja a configurar o ambiente pela primeira vez:
+O projeto utiliza ambiente virtual Python.
+O target make security já cria e configura automaticamente o ambiente necessário.
+
+Caso deseje configurar manualmente:
 
 Criar ambiente virtual:
 
-```bash
+```
 python3 -m venv .venv
 ```
 
-Ativar ambiente virtual:
+Ativar ambiente:
 
 Linux / macOS:
 
-```bash
+```
 source .venv/bin/activate
 ```
 
 Windows (PowerShell):
 
-```powershell
+```
 .venv\Scripts\Activate.ps1
 ```
 
+
 Instalar dependências de desenvolvimento:
 
-```bash
+```
 pip install --upgrade pip
 pip install -r requirements-dev.txt
 ```
-
-Isso instalará ferramentas usadas no projeto, incluindo:
-
-* **Bandit** → análise de segurança do código
-* **pip-audit** → verificação de vulnerabilidades em dependências
-* Ferramentas de teste e qualidade
 
 ------------------------------------------------------------------------
 
 ## Análise de Segurança (Makefile)
 
-Para executar verificações de segurança:
+O projeto possui um target dedicado no Makefile para execução de análises de segurança.
+
+Para executar:
 
 ```bash
 make security
 ```
 
-Isso executa:
+O que o comando faz automaticamente:
 
-* `bandit` → análise estática do código Python
-* `pip-audit` → auditoria das dependências (todos os requirements)
+Cria um ambiente virtual .venv (caso não exista)
 
-Os relatórios serão gerados em:
+Instala as ferramentas necessárias (bandit e pip-audit)
+
+Executa análise estática de código com Bandit
+
+Executa auditoria de dependências com pip-audit
+
+Gera relatórios organizados na pasta:
 
 ```
 Testes_de_Vulnerabilidade/
 ```
+
+Ferramentas utilizadas:
+
+Bandit → análise de segurança do código Python
+
+pip-audit → verificação de vulnerabilidades conhecidas nas dependências
+
+Requisitos mínimos
+
+Python 3.10+
+
+make
+
+Docker (apenas para scans de imagem)
+
+
+Nenhuma instalação manual adicional é necessária.
 
 ------------------------------------------------------------------------
 

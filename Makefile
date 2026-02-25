@@ -1,5 +1,9 @@
 .PHONY: help build up down logs clean security
-PY ?= .venv/bin/python
+
+PYTHON := python3
+VENV := .venv
+PY := $(VENV)/bin/python
+PIP := $(VENV)/bin/pip
 
 # ==============================
 # HELP
@@ -38,16 +42,24 @@ clean:
 	docker compose down -v --rmi all --remove-orphans
 	
 security:
+	@echo "=== PREPARANDO AMBIENTE ==="
+	@if [ ! -d "$(VENV)" ]; then \
+		$(PYTHON) -m venv $(VENV); \
+	fi
+	@$(PIP) install --upgrade pip >/dev/null
+	@$(PIP) install bandit pip-audit >/dev/null
+
 	@echo "=== A CRIAR PASTA DE RELATÓRIOS ==="
-	mkdir -p Testes_de_Vulnerabilidade
+	@mkdir -p Testes_de_Vulnerabilidade
 
 	@echo "=== BANDIT (CODE SECURITY) ==="
-	$(PY) -m bandit -r services -ll -f txt -o Testes_de_Vulnerabilidade/bandit-result.txt
+	@$(PY) -m bandit -r services -ll -f txt -o Testes_de_Vulnerabilidade/bandit-result.txt
 
 	@echo "=== PIP AUDIT (DEPENDENCIES) ==="
-	$(PY) -m pip_audit -r requirements.txt -f json -o Testes_de_Vulnerabilidade/pip-audit-report.json
-	$(PY) -m pip_audit -r requirements.txt 2>&1 | tee Testes_de_Vulnerabilidade/pip-audit-result.txt >/dev/null
-	$(PY) -m pip_audit -r services/webapp/requirements-lock.txt 2>&1 | tee -a Testes_de_Vulnerabilidade/pip-audit-result.txt >/dev/null
+	@$(PY) -m pip_audit -r requirements.txt -f json -o Testes_de_Vulnerabilidade/pip-audit-report.json
+	@$(PY) -m pip_audit -r requirements.txt > Testes_de_Vulnerabilidade/pip-audit-result.txt
+	
+	@echo "=== SCANS PIP FINALIZADOS ==="
 
 	@echo "=== TRIVY IMAGE SCAN ==="
 	trivy image --severity HIGH,CRITICAL --exit-code 1 local/webapp:test | tee Testes_de_Vulnerabilidade/trivy-webapp.txt
