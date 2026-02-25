@@ -1,0 +1,12 @@
+services:
+  webapp:
+    image: ${REGISTRY}/surfpulse-webapp:${APP_TAG}
+
+  surf-data-service:
+    image: ${REGISTRY}/surfpulse-surf-data-service:${APP_TAG}
+
+  notification-service:
+    image: ${REGISTRY}/surfpulse-notification-service:${APP_TAG}
+
+  scheduler-service:
+    image: ${REGISTRY}/surfpulse-scheduler-service:${APP_TAG}

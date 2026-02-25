@@ -49,20 +49,20 @@ CI/CD automatizado e monitorização.
   <img src="/20260225-HLD-ProjetoFinal-DevOps.drawio.png" width="1000"/>
 </p>
 
-O meu HLD apresenta a arquitetura geral da plataforma SurfPulse baseada em microsserviços conteinerizados, evidenciando a separação entre gateway, serviços internos de dados, notificações e agendamento. O acesso do utilizador ocorre através de um ponto de entrada público (Load Balancer), que encaminha requisições para o gateway-service, responsável pela orquestração das chamadas internas e integração com a API externa Open-Meteo. 
+Este  HLD apresenta a arquitetura geral da plataforma SurfPulse baseada em microsserviços conteinerizados, evidenciando a separação entre webapp, serviços internos de dados, notificações e agendamento. O acesso do utilizador ocorre através de um ponto de entrada público, que encaminha requisições para o webapp-service, responsável pela orquestração das chamadas internas e integração com a API externa Open-Meteo.
 
 Fluxo Geral:
 
 User  
 → Internet  
 → Docker Port Publishing (:5000)  
-→ gateway-service  
+→ webapp-service  
 → Serviços internos  
 → API externa (Open-Meteo)
 
-O ponto de entrada da aplicação é o **gateway-service**, exposto através do Docker Port Publishing na porta 5000.
+O ponto de entrada da aplicação é o **webapp-service**, exposto através do Docker Port Publishing na porta 5000.
 
-O gateway orquestra chamadas internas para:
+O Webapp orquestra chamadas internas para:
 
 - surf-data-service
 - notification-service
@@ -101,7 +101,7 @@ Ambientes:
 A aplicação segue uma arquitetura baseada em microserviços
 containerizados utilizando Docker.
 
-O gateway atua como ponto central de acesso às APIs, encaminhando os
+O webapp atua como ponto central de acesso às APIs, encaminhando os
 pedidos para os serviços internos.
 
 O serviço de dados integra uma API meteorológica externa para recolha de
@@ -168,7 +168,8 @@ docker compose up -d --build
 
 A aplicação ficará disponível em:
 
-http://localhost:5000
+https://localhost
+
 ------------------------------------------------------------------------
 ## Endpoint Principal
 
@@ -178,9 +179,9 @@ curl http://localhost:5000/report
 
 Fluxo executado:
 
-1. gateway recebe requisição
+1. webapp recebe requisição
 2. surf-data-service consulta Open-Meteo
-3. dados retornam ao gateway
+3. dados retornam ao webapp
 4. notification-service gera relatório
 5. resposta enviada ao utilizador
 
@@ -190,8 +191,7 @@ Fluxo executado:
 
 No ambiente PRD, o scheduler-service executa chamadas internas periódicas:
 
-scheduler → gateway → notification-service
-
+scheduler → webapp → notification-service
 Gerando relatórios automáticos.
 
 ------------------------------------------------------------------------

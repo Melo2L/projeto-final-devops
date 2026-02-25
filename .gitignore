@@ -1,0 +1,21 @@
+__pycache__/
+*.log
+*.tmp
+*.swp
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+
+# Backups / temporários
+*.bak
+*.broken*
+*.old
+
+Testes_de_Vulnerabilidade/
+Prints/

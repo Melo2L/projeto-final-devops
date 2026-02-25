@@ -4,7 +4,7 @@ import requests
 import datetime
 
 ENV = os.getenv("ENVIRONMENT", "DEV")
-GATEWAY_URL = os.getenv("GATEWAY_URL", "http://gateway:5000")
+GATEWAY_URL = os.getenv("GATEWAY_URL", "http://webapp:5000")
 INTERNAL_TOKEN = os.getenv("INTERNAL_TOKEN", "dev-token")
 SCHEDULE_SECONDS = int(os.getenv("SCHEDULE_SECONDS", "60"))  # DEV: 60s
 
@@ -26,7 +26,7 @@ def run_once():
             print(f"[scheduler] tentativa {attempt+1}/5 falhou: {e}")
             time.sleep(5)
 
-    print("[scheduler] gateway indisponível após retries.")
+    print("[scheduler] webapp indisponível após retries.")
 
 
 def main():

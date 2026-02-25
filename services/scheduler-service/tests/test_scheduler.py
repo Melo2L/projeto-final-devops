@@ -10,7 +10,7 @@ m = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(m)
 
-def test_run_once_posts_to_gateway(monkeypatch):
+def test_run_once_posts_to_webapp(monkeypatch):
     called = {"count": 0}
 
     class FakeResp:

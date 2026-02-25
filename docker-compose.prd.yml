@@ -1,14 +1,38 @@
 services:
-  gateway:
+  webapp:
+    image: ${REGISTRY}/surfpulse-webapp:${APP_TAG}
     environment:
       - ENVIRONMENT=PRD
+      - ENABLE_OTEL=false
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - SURF_DATA_URL=http://surf-data-service:5001
+      - NOTIFY_URL=http://notification-service:5002
+
   surf-data-service:
+    image: ${REGISTRY}/surfpulse-surf-data-service:${APP_TAG}
     environment:
       - ENVIRONMENT=PRD
+
   notification-service:
+    image: ${REGISTRY}/surfpulse-notification-service:${APP_TAG}
     environment:
       - ENVIRONMENT=PRD
+
   scheduler-service:
+    image: ${REGISTRY}/surfpulse-scheduler-service:${APP_TAG}
     environment:
       - ENVIRONMENT=PRD
-      - SCHEDULE_SECONDS=86400
+      - INTERNAL_TOKEN=${INTERNAL_TOKEN}
+      - GATEWAY_URL=http://webapp:5000
+      - SCHEDULE_SECONDS=${SCHEDULE_SECONDS:-60}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - webapp
