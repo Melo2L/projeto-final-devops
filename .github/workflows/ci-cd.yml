@@ -9,6 +9,7 @@ on:
 
 jobs:
   quality-gate:
+    name: Quality Gate (Tests + Security)
     runs-on: ubuntu-latest
     steps:
 
